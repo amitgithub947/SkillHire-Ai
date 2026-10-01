@@ -7,6 +7,10 @@ public class Job
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;
+
+    /// <summary>Comma-separated key skills, e.g. "C#, ASP.NET Core, SQL". Used by the skills filter.</summary>
+    public string? Skills { get; set; }
+
     public string? Location { get; set; }
     public decimal? SalaryMin { get; set; }
     public decimal? SalaryMax { get; set; }

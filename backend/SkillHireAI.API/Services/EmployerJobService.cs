@@ -126,6 +126,7 @@ public class EmployerJobService : IEmployerJobService
         job.Title = request.Title.Trim();
         job.Description = request.Description.Trim();
         job.Requirements = request.Requirements.Trim();
+        job.Skills = SkillList.Normalize(request.Skills);
         job.Location = string.IsNullOrWhiteSpace(request.Location) ? null : request.Location.Trim();
         job.SalaryMin = request.SalaryMin;
         job.SalaryMax = request.SalaryMax;

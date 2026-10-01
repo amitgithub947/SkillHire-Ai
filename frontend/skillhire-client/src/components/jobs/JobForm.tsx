@@ -11,6 +11,7 @@ interface JobFormValues {
   title: string
   description: string
   requirements: string
+  skills: string
   location: string
   salaryMin: string
   salaryMax: string
@@ -31,6 +32,7 @@ function toValues(job?: Job): JobFormValues {
     title: job?.title ?? '',
     description: job?.description ?? '',
     requirements: job?.requirements ?? '',
+    skills: job?.skills ?? '',
     location: job?.location ?? '',
     salaryMin: job?.salaryMin?.toString() ?? '',
     salaryMax: job?.salaryMax?.toString() ?? '',
@@ -54,6 +56,7 @@ function validate(values: JobFormValues): JobFormErrors {
 
   if (description.length < 20) errors.description = 'Description must be at least 20 characters.'
   if (requirements.length < 10) errors.requirements = 'Requirements must be at least 10 characters.'
+  if (values.skills.length > 500) errors.skills = 'Skills must be 500 characters or fewer.'
 
   const min = toNumber(values.salaryMin)
   const max = toNumber(values.salaryMax)
@@ -95,6 +98,7 @@ export function JobForm({ initialJob, submitLabel, onSubmit, onCancel }: JobForm
         title: values.title.trim(),
         description: values.description.trim(),
         requirements: values.requirements.trim(),
+        skills: emptyToNull(values.skills),
         location: emptyToNull(values.location),
         salaryMin: toNumber(values.salaryMin),
         salaryMax: toNumber(values.salaryMax),
@@ -184,8 +188,20 @@ export function JobForm({ initialJob, submitLabel, onSubmit, onCancel }: JobForm
         value={values.requirements}
         onChange={handleChange}
         error={errors.requirements}
-        hint="List the key skills. These will be used for skill matching later."
+        hint="Qualifications and experience you expect from candidates."
       />
+
+      <FormField
+        label="Key skills (optional)"
+        name="skills"
+        placeholder="e.g. React, TypeScript, REST APIs"
+        value={values.skills}
+        onChange={handleChange}
+        error={errors.skills}
+      />
+      <p className="-mt-4 text-sm text-slate-500">
+        Separate skills with commas. Candidates use these to filter jobs.
+      </p>
 
       <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-6">
         <Button variant="secondary" onClick={onCancel} disabled={isSubmitting}>

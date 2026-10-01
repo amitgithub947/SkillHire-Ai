@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import type { Job } from '../../types/job'
 import { formatDate, formatExperience, formatSalary } from '../../utils/format'
 import { CompanyLogo } from '../CompanyLogo'
@@ -8,12 +9,14 @@ interface JobTableProps {
   jobs: Job[]
   /** Show the company column (admin views). */
   showCompany?: boolean
+  /** Show the application count, linking to the employer's applications page. */
+  showApplicants?: boolean
   /** Buttons rendered in the last column for each row. */
   renderActions?: (job: Job) => ReactNode
   onTitleClick?: (job: Job) => void
 }
 
-export function JobTable({ jobs, showCompany = false, renderActions, onTitleClick }: JobTableProps) {
+export function JobTable({ jobs, showCompany = false, showApplicants = false, renderActions, onTitleClick }: JobTableProps) {
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
       <table className="min-w-full divide-y divide-slate-200 text-sm">
@@ -22,6 +25,7 @@ export function JobTable({ jobs, showCompany = false, renderActions, onTitleClic
             <th className="px-5 py-3">Job</th>
             {showCompany && <th className="px-5 py-3">Company</th>}
             <th className="px-5 py-3">Status</th>
+            {showApplicants && <th className="px-5 py-3">Applicants</th>}
             <th className="hidden px-5 py-3 md:table-cell">Salary</th>
             <th className="hidden px-5 py-3 lg:table-cell">Experience</th>
             <th className="hidden px-5 py-3 lg:table-cell">Posted</th>
@@ -59,6 +63,20 @@ export function JobTable({ jobs, showCompany = false, renderActions, onTitleClic
                   <p className="mt-1.5 max-w-xs text-xs text-red-600">{job.rejectionReason}</p>
                 )}
               </td>
+              {showApplicants && (
+                <td className="whitespace-nowrap px-5 py-4">
+                  {job.applicationCount > 0 ? (
+                    <Link
+                      to={`/employer/applications?jobId=${job.id}`}
+                      className="font-semibold text-brand-blue hover:underline"
+                    >
+                      {job.applicationCount} {job.applicationCount === 1 ? 'applicant' : 'applicants'}
+                    </Link>
+                  ) : (
+                    <span className="text-slate-400">None yet</span>
+                  )}
+                </td>
+              )}
               <td className="hidden whitespace-nowrap px-5 py-4 text-slate-700 md:table-cell">
                 {formatSalary(job.salaryMin, job.salaryMax)}
               </td>

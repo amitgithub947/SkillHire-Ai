@@ -4,11 +4,13 @@ A role-based job recruitment platform. Employers post jobs, candidates search an
 and admins run the platform. AI (OpenAI) will help candidates with resume analysis,
 skill-match percentages and job recommendations.
 
-**Current status: Day 2 — employer and admin job management.**
+**Current status: Day 3 — candidates, applications and interviews.**
 
 - Day 1: foundation and authentication.
 - Day 2: employer company profile, employer job posting (create, edit, close),
   admin review of jobs (approve / reject), admin views of users, employers and candidates.
+- Day 3: candidate profile and resume upload, job search with filters, applying to jobs,
+  tracking applications, employer review (shortlist, reject, select) and interview scheduling.
 
 ## Tech stack
 
@@ -27,11 +29,14 @@ skill-match percentages and job recommendations.
 SkillHireAI/
 ├── backend/
 │   └── SkillHireAI.API/
-│       ├── Controllers/     Auth, Dashboard, Employer, EmployerJobs, Admin
+│       ├── Controllers/     Auth, Dashboard, Employer, EmployerJobs, EmployerApplications,
+│       │                    Admin, Candidate, CandidateJobs, CandidateApplications
 │       ├── Models/          User, Employer, Candidate, Job, Application, Interview, ResumeAnalysis
 │       ├── DTOs/            Request/response objects (entities are never returned directly)
 │       ├── Data/            ApplicationDbContext, DbSeeder (creates the first admin)
-│       ├── Services/        Auth, Token, Employer, EmployerJob, Admin services
+│       ├── Services/        Auth, Token, Employer, Admin, Candidate, application and
+│       │                    interview services, resume storage
+│       ├── App_Data/        Uploaded resumes (created at runtime, not in git)
 │       ├── Middleware/      Global exception handling
 │       ├── Migrations/      EF Core migrations
 │       ├── Program.cs
@@ -46,7 +51,9 @@ SkillHireAI/
 │           ├── context/     AuthContext + useAuth hook
 │           ├── routes/      Protected and role-based routes
 │           └── types/       TypeScript models
-├── scripts/api_smoke_test.py  End-to-end API checks
+├── scripts/
+│   ├── api_smoke_test.py               Day 1-2 API checks
+│   └── application_workflow_test.py    Day 3 candidate, application and interview checks
 ├── docker-compose.yml       Local SQL Server
 └── README.md
 ```
@@ -144,16 +151,55 @@ Admins cannot self-register. One is seeded from `appsettings.Development.json`:
 Job status rules: employers never set status themselves, only `Pending` jobs can be
 approved or rejected, and closed jobs cannot be edited or reopened.
 
+### Candidate (Day 3, Candidate role only)
+
+| Method | Endpoint                                   | Description |
+| ------ | ------------------------------------------ | ----------- |
+| GET    | `/api/candidate/dashboard`                 | Application counts, upcoming interviews, new jobs |
+| GET    | `/api/candidate/profile`                   | My profile |
+| PUT    | `/api/candidate/profile`                   | Update phone, location, skills, experience, resume link |
+| POST   | `/api/candidate/resume`                    | Upload resume (multipart `file`; PDF, DOC or DOCX, max 5 MB) |
+| GET    | `/api/candidate/resume`                    | Download my resume |
+| DELETE | `/api/candidate/resume`                    | Remove my resume |
+| GET    | `/api/candidate/interviews?upcoming=`      | My interviews |
+| GET    | `/api/candidate/jobs?search=&location=&experience=&skills=&page=&pageSize=` | Search approved jobs |
+| GET    | `/api/candidate/jobs/{id}`                 | Approved job details |
+| GET    | `/api/candidate/applications?status=`      | My applications |
+| GET    | `/api/candidate/applications/{id}`         | One of my applications, with interviews |
+| POST   | `/api/candidate/applications`              | Apply, body: `{ "jobId": 1, "coverLetter": "..." }` |
+| PUT    | `/api/candidate/applications/{id}`         | Edit cover letter (only while `Applied`) |
+| DELETE | `/api/candidate/applications/{id}`         | Withdraw (only while `Applied`) |
+
+### Employer applications and interviews (Day 3, Employer role only)
+
+| Method | Endpoint                                         | Description |
+| ------ | ------------------------------------------------ | ----------- |
+| GET    | `/api/employer/applications?jobId=&status=&search=` | Applications for my jobs |
+| GET    | `/api/employer/applications/{id}`                | Application with candidate profile and interviews |
+| GET    | `/api/employer/applications/{id}/resume`         | Download the candidate's resume |
+| PATCH  | `/api/employer/applications/{id}/shortlist`      | Shortlist |
+| PATCH  | `/api/employer/applications/{id}/reject`         | Reject (cancels scheduled interviews) |
+| PATCH  | `/api/employer/applications/{id}/select`         | Select |
+| POST   | `/api/employer/applications/{id}/interviews`     | Schedule an interview |
+| GET    | `/api/employer/interviews?upcoming=`             | My interviews |
+| PATCH  | `/api/employer/interviews/{id}`                  | Mark `Completed` (with feedback) or `Cancelled` |
+
+Application rules: a candidate applies only to `Approved` jobs, only once per job, and
+needs a resume (uploaded file or link). Statuses move
+`Applied → Shortlisted → InterviewScheduled → Selected`, and `Rejected` is possible until
+the candidate is selected. Anything owned by another user returns `404`.
+
 To call protected endpoints in Swagger, log in, copy the `token`, click **Authorize**
 and paste it.
 
-### Smoke test
+### API tests
 
-With the API running, this registers test users and checks every endpoint,
+With the API running, these register test users and check every endpoint,
 including role and ownership rules:
 
 ```bash
-python3 scripts/api_smoke_test.py
+python3 scripts/api_smoke_test.py            # auth, employer and admin
+python3 scripts/application_workflow_test.py # candidates, applications, interviews
 ```
 
 ## Configuration and secrets

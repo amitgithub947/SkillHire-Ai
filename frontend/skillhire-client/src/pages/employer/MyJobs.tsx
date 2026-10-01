@@ -92,6 +92,7 @@ export default function MyJobs() {
           ) : (
             <JobTable
               jobs={visibleJobs}
+              showApplicants
               onTitleClick={setViewing}
               renderActions={(job) =>
                 job.status === 'Closed' ? (

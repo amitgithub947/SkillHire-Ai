@@ -37,7 +37,8 @@ namespace SkillHireAI.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CoverLetter")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
 
                     b.Property<int>("JobId")
                         .HasColumnType("int");
@@ -47,9 +48,14 @@ namespace SkillHireAI.API.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CandidateId");
+
+                    b.HasIndex("Status");
 
                     b.HasIndex("JobId", "CandidateId")
                         .IsUnique();
@@ -66,7 +72,11 @@ namespace SkillHireAI.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Experience")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("int");
 
                     b.Property<string>("Location")
                         .HasMaxLength(200)
@@ -76,12 +86,24 @@ namespace SkillHireAI.API.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("ResumeFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResumeStoredName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ResumeUploadedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ResumeUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Skills")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -145,8 +167,12 @@ namespace SkillHireAI.API.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Feedback")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("InterviewDate")
                         .HasColumnType("datetime2");
@@ -154,6 +180,10 @@ namespace SkillHireAI.API.Migrations
                     b.Property<string>("MeetingLink")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -168,6 +198,8 @@ namespace SkillHireAI.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
+
+                    b.HasIndex("InterviewDate");
 
                     b.ToTable("Interviews");
                 });
@@ -215,6 +247,10 @@ namespace SkillHireAI.API.Migrations
                     b.Property<decimal?>("SalaryMin")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Skills")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Status")
                         .IsRequired()

@@ -5,8 +5,10 @@ interface ModalProps {
   onClose: () => void
   children: ReactNode
   footer?: ReactNode
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
 }
+
+const WIDTHS = { md: 'max-w-md', lg: 'max-w-2xl', xl: 'max-w-4xl' }
 
 export function Modal({ title, onClose, children, footer, size = 'md' }: ModalProps) {
   useEffect(() => {
@@ -26,7 +28,7 @@ export function Modal({ title, onClose, children, footer, size = 'md' }: ModalPr
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative flex max-h-[90vh] w-full flex-col rounded-2xl bg-white shadow-2xl ${size === 'lg' ? 'max-w-2xl' : 'max-w-md'}`}
+        className={`relative flex max-h-[90vh] w-full flex-col rounded-2xl bg-white shadow-2xl ${WIDTHS[size]}`}
       >
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
           <h2 id="modal-title" className="text-lg font-semibold text-brand-navy">

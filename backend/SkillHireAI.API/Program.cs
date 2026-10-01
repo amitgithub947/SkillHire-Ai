@@ -60,6 +60,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployerService, EmployerService>();
 builder.Services.AddScoped<IEmployerJobService, EmployerJobService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICandidateService, CandidateService>();
+builder.Services.AddScoped<ICandidateJobService, CandidateJobService>();
+builder.Services.AddScoped<ICandidateApplicationService, CandidateApplicationService>();
+builder.Services.AddScoped<IEmployerApplicationService, EmployerApplicationService>();
+builder.Services.AddSingleton<IResumeStorage, ResumeStorage>();
 
 // ---------- CORS (React dev server) ----------
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];

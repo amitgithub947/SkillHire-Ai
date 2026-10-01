@@ -1,6 +1,7 @@
 import type { Job } from '../../types/job'
-import { formatDate, formatExperience, formatSalary } from '../../utils/format'
+import { formatDate, formatExperience, formatSalary, parseSkills } from '../../utils/format'
 import { CompanyLogo } from '../CompanyLogo'
+import { SkillTags } from '../SkillTags'
 import { StatusBadge } from '../StatusBadge'
 
 export function JobDetails({ job }: { job: Job }) {
@@ -32,6 +33,12 @@ export function JobDetails({ job }: { job: Job }) {
 
       <Section title="Description" text={job.description} />
       <Section title="Requirements" text={job.requirements} />
+      {job.skills && (
+        <div>
+          <h4 className="mb-2 text-sm font-semibold text-slate-700">Key skills</h4>
+          <SkillTags skills={parseSkills(job.skills)} />
+        </div>
+      )}
     </div>
   )
 }

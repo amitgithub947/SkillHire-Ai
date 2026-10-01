@@ -1,3 +1,5 @@
+import type { ApplicationStats } from './application'
+import type { Interview } from './interview'
 import type { Job, JobStats } from './job'
 
 export interface EmployerProfile {
@@ -25,4 +27,6 @@ export interface EmployerDashboard {
   profileComplete: boolean
   jobs: JobStats
   recentJobs: Job[]
+  applications: ApplicationStats
+  upcomingInterviews: Interview[]
 }

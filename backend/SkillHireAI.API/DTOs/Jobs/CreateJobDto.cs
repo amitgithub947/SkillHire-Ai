@@ -21,6 +21,10 @@ public class CreateJobDto
     [StringLength(3000, MinimumLength = 10, ErrorMessage = "Requirements must be between 10 and 3000 characters.")]
     public string Requirements { get; set; } = string.Empty;
 
+    /// <summary>Comma-separated key skills, e.g. "C#, ASP.NET Core, SQL".</summary>
+    [StringLength(500, ErrorMessage = "Skills must be 500 characters or fewer.")]
+    public string? Skills { get; set; }
+
     [StringLength(200)]
     public string? Location { get; set; }
 

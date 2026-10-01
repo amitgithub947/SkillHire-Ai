@@ -12,6 +12,8 @@ obj/
 *.suo
 .vs/
 appsettings.Production.json
+# Uploaded resumes (personal data)
+App_Data/
 
 # Node / Vite
 node_modules/

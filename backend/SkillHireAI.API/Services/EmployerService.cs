@@ -39,6 +39,7 @@ public class EmployerService : IEmployerService
     {
         var employer = await GetEmployerAsync(userId);
         var myJobs = _db.Jobs.Where(j => j.EmployerId == employer.Id);
+        var now = DateTime.UtcNow;
 
         return new EmployerDashboardDto
         {
@@ -49,6 +50,16 @@ public class EmployerService : IEmployerService
                 .OrderByDescending(j => j.CreatedAt)
                 .Take(5)
                 .Select(JobQueries.ToDto)
+                .ToListAsync(),
+            Applications = await ApplicationQueries.GetStatsAsync(
+                _db.Applications.Where(a => a.Job.EmployerId == employer.Id)),
+            UpcomingInterviews = await _db.Interviews
+                .Where(i => i.Application.Job.EmployerId == employer.Id &&
+                            i.Status == InterviewStatus.Scheduled &&
+                            i.InterviewDate >= now)
+                .OrderBy(i => i.InterviewDate)
+                .Take(5)
+                .Select(ApplicationQueries.ToInterviewDto)
                 .ToListAsync()
         };
     }

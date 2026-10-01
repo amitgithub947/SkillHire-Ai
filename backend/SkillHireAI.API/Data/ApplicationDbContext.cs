@@ -17,6 +17,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<Interview> Interviews => Set<Interview>();
     public DbSet<ResumeAnalysis> ResumeAnalyses => Set<ResumeAnalysis>();
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        // All dates are saved in UTC. SQL Server's datetime2 doesn't keep that, so mark them as UTC
+        // when reading; otherwise the JSON has no "Z" and browsers treat the time as local.
+        configurationBuilder.Properties<DateTime>().HaveConversion<UtcDateTimeConverter>();
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -60,7 +67,11 @@ public class ApplicationDbContext : DbContext
         {
             entity.Property(c => c.Phone).HasMaxLength(30);
             entity.Property(c => c.Location).HasMaxLength(200);
+            entity.Property(c => c.Skills).HasMaxLength(1000);
+            entity.Property(c => c.Experience).HasMaxLength(3000);
             entity.Property(c => c.ResumeUrl).HasMaxLength(500);
+            entity.Property(c => c.ResumeFileName).HasMaxLength(255);
+            entity.Property(c => c.ResumeStoredName).HasMaxLength(100);
 
             entity.HasMany(c => c.Applications)
                 .WithOne(a => a.Candidate)
@@ -78,6 +89,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(j => j.Title).HasMaxLength(200).IsRequired();
             entity.Property(j => j.Description).IsRequired();
             entity.Property(j => j.Requirements).IsRequired();
+            entity.Property(j => j.Skills).HasMaxLength(500);
             entity.Property(j => j.Location).HasMaxLength(200);
             entity.Property(j => j.SalaryMin).HasPrecision(18, 2);
             entity.Property(j => j.SalaryMax).HasPrecision(18, 2);
@@ -96,6 +108,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Application>(entity =>
         {
             entity.Property(a => a.Status).HasConversion<string>().HasMaxLength(30);
+            entity.Property(a => a.CoverLetter).HasMaxLength(3000);
+            entity.HasIndex(a => a.Status);
 
             // A candidate can apply to the same job only once.
             entity.HasIndex(a => new { a.JobId, a.CandidateId }).IsUnique();
@@ -111,6 +125,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(i => i.Type).HasConversion<string>().HasMaxLength(20);
             entity.Property(i => i.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(i => i.MeetingLink).HasMaxLength(500);
+            entity.Property(i => i.Notes).HasMaxLength(1000);
+            entity.Property(i => i.Feedback).HasMaxLength(2000);
+            entity.HasIndex(i => i.InterviewDate);
         });
     }
 }

@@ -12,9 +12,10 @@ export interface ApiError {
   fieldErrors: Record<string, string>
 }
 
-export interface DashboardInfo {
-  message: string
-  userId: number
-  email: string
-  role: string
+export interface PagedResult<T> {
+  items: T[]
+  page: number
+  pageSize: number
+  totalCount: number
+  totalPages: number
 }

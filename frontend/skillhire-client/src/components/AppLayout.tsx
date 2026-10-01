@@ -20,9 +20,17 @@ const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { to: '/employer', label: 'Dashboard', end: true },
     { to: '/employer/jobs', label: 'My jobs', end: true },
     { to: '/employer/jobs/new', label: 'Post a job' },
+    { to: '/employer/applications', label: 'Applications' },
     { to: '/employer/profile', label: 'Company profile' },
   ],
-  Candidate: [{ to: '/candidate', label: 'Dashboard', end: true }],
+  Candidate: [
+    { to: '/candidate', label: 'Dashboard', end: true },
+    { to: '/candidate/jobs', label: 'Find jobs' },
+    { to: '/candidate/applications', label: 'My applications' },
+    { to: '/candidate/interviews', label: 'Interviews' },
+    { to: '/candidate/profile', label: 'Profile' },
+    { to: '/candidate/resume', label: 'Resume' },
+  ],
 }
 
 const ROLE_BADGE: Record<UserRole, string> = {

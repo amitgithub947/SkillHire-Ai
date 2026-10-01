@@ -1,6 +1,13 @@
+import type {
+  EmployerApplication,
+  EmployerApplicationDetails,
+  EmployerApplicationFilters,
+} from '../types/application'
 import type { EmployerDashboard, EmployerProfile, EmployerProfileInput } from '../types/employer'
+import type { Interview, ScheduleInterviewInput, UpdateInterviewStatusInput } from '../types/interview'
 import type { Job, JobInput } from '../types/job'
 import { api } from './api'
+import { fetchFile } from './fileService'
 
 export const employerService = {
   async getDashboard(): Promise<EmployerDashboard> {
@@ -40,6 +47,40 @@ export const employerService = {
 
   async closeJob(id: number): Promise<Job> {
     const { data } = await api.patch<Job>(`/api/employer/jobs/${id}/close`)
+    return data
+  },
+
+  async getApplications(filters: EmployerApplicationFilters = {}): Promise<EmployerApplication[]> {
+    const { data } = await api.get<EmployerApplication[]>('/api/employer/applications', {
+      params: { jobId: filters.jobId, status: filters.status, search: filters.search?.trim() || undefined },
+    })
+    return data
+  },
+
+  async getApplication(id: number): Promise<EmployerApplicationDetails> {
+    const { data } = await api.get<EmployerApplicationDetails>(`/api/employer/applications/${id}`)
+    return data
+  },
+
+  downloadResume(applicationId: number, fallbackName: string) {
+    return fetchFile(`/api/employer/applications/${applicationId}/resume`, fallbackName)
+  },
+
+  async changeApplicationStatus(
+    id: number,
+    action: 'shortlist' | 'reject' | 'select',
+  ): Promise<EmployerApplicationDetails> {
+    const { data } = await api.patch<EmployerApplicationDetails>(`/api/employer/applications/${id}/${action}`)
+    return data
+  },
+
+  async scheduleInterview(applicationId: number, input: ScheduleInterviewInput): Promise<Interview> {
+    const { data } = await api.post<Interview>(`/api/employer/applications/${applicationId}/interviews`, input)
+    return data
+  },
+
+  async updateInterviewStatus(id: number, input: UpdateInterviewStatusInput): Promise<Interview> {
+    const { data } = await api.patch<Interview>(`/api/employer/interviews/${id}`, input)
     return data
   },
 }

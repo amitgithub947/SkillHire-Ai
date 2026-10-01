@@ -18,6 +18,7 @@ public static class JobQueries
         Title = j.Title,
         Description = j.Description,
         Requirements = j.Requirements,
+        Skills = j.Skills,
         Location = j.Location,
         SalaryMin = j.SalaryMin,
         SalaryMax = j.SalaryMax,
@@ -26,7 +27,8 @@ public static class JobQueries
         RejectionReason = j.RejectionReason,
         CreatedAt = j.CreatedAt,
         UpdatedAt = j.UpdatedAt,
-        ReviewedAt = j.ReviewedAt
+        ReviewedAt = j.ReviewedAt,
+        ApplicationCount = j.Applications.Count()
     };
 
     public static async Task<JobStatsDto> GetStatsAsync(IQueryable<Job> jobs)

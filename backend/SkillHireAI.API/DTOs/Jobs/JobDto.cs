@@ -11,6 +11,7 @@ public class JobDto
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;
+    public string? Skills { get; set; }
     public string? Location { get; set; }
     public decimal? SalaryMin { get; set; }
     public decimal? SalaryMax { get; set; }
@@ -20,4 +21,5 @@ public class JobDto
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? ReviewedAt { get; set; }
+    public int ApplicationCount { get; set; }
 }
