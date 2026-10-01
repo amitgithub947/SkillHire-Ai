@@ -1,0 +1,25 @@
+# OS / editors
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+appsettings.Production.json
+
+# Node / Vite
+node_modules/
+dist/
+*.local
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

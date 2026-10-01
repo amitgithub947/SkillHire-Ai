@@ -1,0 +1,20 @@
+# Local SQL Server for development.
+# SQL Server has no native macOS build; on Apple Silicon this runs through
+# Docker's x86_64 emulation (enable "Use Rosetta" in Docker Desktop settings).
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: skillhire-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "SkillHire_Dev_2026!"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - skillhire-sqldata:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  skillhire-sqldata:
