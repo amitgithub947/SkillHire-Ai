@@ -276,9 +276,15 @@ export default function CandidateDetails() {
           interview={updatingInterview.interview}
           status={updatingInterview.status}
           onClose={() => setUpdatingInterview(null)}
-          onSaved={() => {
+          onSaved={(updated) => {
             setUpdatingInterview(null)
-            setMessage(updatingInterview.status === 'Completed' ? 'Interview marked as completed.' : 'Interview cancelled.')
+            setMessage(
+              updated.status === 'Completed'
+                ? 'Interview marked as completed.'
+                : updated.candidateNotified
+                  ? `Interview cancelled. We've let ${data.candidateName} know by email.`
+                  : "Interview cancelled. The email to the candidate couldn't be sent.",
+            )
             reload()
           }}
         />
@@ -291,7 +297,7 @@ interface InterviewOutcomeModalProps {
   interview: Interview
   status: 'Completed' | 'Cancelled'
   onClose: () => void
-  onSaved: () => void
+  onSaved: (updated: Interview) => void
 }
 
 function InterviewOutcomeModal({ interview, status, onClose, onSaved }: InterviewOutcomeModalProps) {
@@ -308,8 +314,7 @@ function InterviewOutcomeModal({ interview, status, onClose, onSaved }: Intervie
     setIsSaving(true)
     setError(null)
     try {
-      await employerService.updateInterviewStatus(interview.id, { status, feedback: emptyToNull(feedback) })
-      onSaved()
+      onSaved(await employerService.updateInterviewStatus(interview.id, { status, feedback: emptyToNull(feedback) }))
     } catch (err) {
       setError(parseApiError(err).message)
       setIsSaving(false)
@@ -335,7 +340,7 @@ function InterviewOutcomeModal({ interview, status, onClose, onSaved }: Intervie
         {error && <Alert variant="error">{error}</Alert>}
         <p className="text-sm text-slate-600 dark:text-slate-300">
           {formatDateTime(interview.interviewDate)} with {interview.candidateName}.
-          {!completing && ' If this was the only interview, the candidate goes back to the shortlist.'}
+          {!completing && ' The candidate gets an email. If this was the only interview, they go back to the shortlist.'}
         </p>
         <TextAreaField
           label={completing ? 'Feedback (shared with the candidate)' : 'Reason (optional)'}

@@ -4,6 +4,7 @@ using SkillHireAI.API.DTOs.Applications;
 using SkillHireAI.API.DTOs.Interviews;
 using SkillHireAI.API.Middleware;
 using SkillHireAI.API.Models;
+using SkillHireAI.API.Services.Email;
 
 namespace SkillHireAI.API.Services;
 
@@ -27,11 +28,13 @@ public class EmployerApplicationService : IEmployerApplicationService
 
     private readonly ApplicationDbContext _db;
     private readonly IResumeStorage _resumes;
+    private readonly IInterviewNotifier _notifier;
 
-    public EmployerApplicationService(ApplicationDbContext db, IResumeStorage resumes)
+    public EmployerApplicationService(ApplicationDbContext db, IResumeStorage resumes, IInterviewNotifier notifier)
     {
         _db = db;
         _resumes = resumes;
+        _notifier = notifier;
     }
 
     public async Task<List<EmployerApplicationDto>> GetApplicationsAsync(
@@ -125,7 +128,9 @@ public class EmployerApplicationService : IEmployerApplicationService
         application.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
 
-        return await GetInterviewDtoAsync(interview.Id);
+        var dto = await GetInterviewDtoAsync(interview.Id);
+        dto.CandidateNotified = await _notifier.SendScheduledAsync(interview.Id);
+        return dto;
     }
 
     public async Task<InterviewDto> UpdateInterviewStatusAsync(int userId, int interviewId, UpdateInterviewStatusDto request)
@@ -163,7 +168,12 @@ public class EmployerApplicationService : IEmployerApplicationService
         application.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
 
-        return await GetInterviewDtoAsync(interview.Id);
+        var dto = await GetInterviewDtoAsync(interview.Id);
+        if (interview.Status == InterviewStatus.Cancelled)
+        {
+            dto.CandidateNotified = await _notifier.SendCancelledAsync(interview.Id);
+        }
+        return dto;
     }
 
     public async Task<List<InterviewDto>> GetInterviewsAsync(int userId, bool upcomingOnly)

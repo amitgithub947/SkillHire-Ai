@@ -66,6 +66,7 @@ SkillHireAI/
 │   ├── application_workflow_test.py    Day 3 candidate, application and interview checks
 │   ├── ai_features_test.py             Day 4 AI endpoint checks (uses the mock below)
 │   ├── password_reset_test.py          Day 5 forgot-password checks
+│   ├── interview_email_test.py         Interview scheduled/cancelled email checks
 │   └── mock_openai.py                  Local stand-in for the AI API, no key or cost
 ├── docker-compose.yml       Local SQL Server
 └── README.md
@@ -224,6 +225,13 @@ needs a resume (uploaded file or link). Statuses move
 `Applied → Shortlisted → InterviewScheduled → Selected`, and `Rejected` is possible until
 the candidate is selected. Anything owned by another user returns `404`.
 
+Interview emails: when an employer schedules an interview, the candidate gets an email
+with the job, company, date and time, type, meeting link and notes. Cancelling an
+interview sends a cancellation email. The schedule and cancel responses include
+`candidateNotified` (`true`/`false`) so the employer sees whether the email went out.
+A failed email never undoes the interview. Completing an interview and rejecting an
+application send no email.
+
 ### AI (Day 4, Candidate role only)
 
 | Method | Endpoint                         | Description |
@@ -276,6 +284,7 @@ to a file (takes about a minute because it waits out the resend cooldown):
 cd backend/SkillHireAI.API
 dotnet run --launch-profile http > /tmp/skillhire_api.log 2>&1   # terminal 1
 python3 scripts/password_reset_test.py                          # terminal 2
+python3 scripts/interview_email_test.py                         # interview emails
 ```
 
 ## Configuration and secrets
@@ -289,7 +298,7 @@ export ConnectionStrings__DefaultConnection="Server=...;Database=SkillHireAI_DB;
 export Jwt__Key="a-long-random-secret-of-at-least-32-bytes"
 ```
 
-### Email (password reset codes)
+### Email (password reset codes and interview emails)
 
 With no SMTP server configured, the API prints emails (including reset codes) to its
 console in Development, so you can test locally. Outside Development nothing is printed
@@ -303,6 +312,10 @@ dotnet user-secrets set "Email:SmtpHost" "smtp.gmail.com"
 dotnet user-secrets set "Email:Username" "you@gmail.com"
 dotnet user-secrets set "Email:Password" "your-app-password"
 ```
+
+Interview emails also use `Email:AppBaseUrl` (the React app address, used for the
+"see your interviews" link) and `Email:DisplayTimeZone` (the time zone used for the
+interview time in the email, default `Asia/Kolkata`).
 
 ### AI (Gemini) API key
 

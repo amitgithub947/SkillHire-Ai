@@ -19,6 +19,8 @@ export interface Interview {
   /** Candidates only receive this once the interview is completed. */
   feedback: string | null
   createdAt: string
+  /** Only in the response to scheduling or cancelling: whether the candidate was emailed. */
+  candidateNotified?: boolean
 }
 
 export interface ScheduleInterviewInput {

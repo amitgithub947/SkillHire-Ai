@@ -112,8 +112,11 @@ export default function ScheduleInterview() {
         meetingLink: emptyToNull(values.meetingLink),
         notes: emptyToNull(values.notes),
       })
+      const emailNote = interview.candidateNotified
+        ? `We've emailed the details to ${data.candidateName}.`
+        : "The email to the candidate couldn't be sent, but they can see it on their interviews page."
       navigate(backTo, {
-        state: { message: `Interview scheduled for ${formatDateTime(interview.interviewDate)}. The candidate can see it now.` },
+        state: { message: `Interview scheduled for ${formatDateTime(interview.interviewDate)}. ${emailNote}` },
       })
     } catch (err) {
       const apiError = parseApiError(err)
@@ -128,7 +131,10 @@ export default function ScheduleInterview() {
       <Link to={backTo} className="mb-6 inline-block text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-blue-400">
         ← Back to {data.candidateName}
       </Link>
-      <PageHeader title="Schedule interview" subtitle="The candidate sees these details on their interviews page." />
+      <PageHeader
+        title="Schedule interview"
+        subtitle="The candidate gets an email with these details and sees them on their interviews page."
+      />
 
       <div className="grid gap-8 lg:grid-cols-3">
         <form

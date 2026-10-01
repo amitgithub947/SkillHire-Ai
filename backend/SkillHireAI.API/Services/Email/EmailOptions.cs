@@ -17,5 +17,11 @@ public class EmailOptions
     public string FromAddress { get; set; } = "no-reply@skillhire.ai";
     public string FromName { get; set; } = "SkillHire AI";
 
+    /// <summary>Address of the React app, used for links in emails.</summary>
+    public string AppBaseUrl { get; set; } = "http://localhost:5173";
+
+    /// <summary>IANA time zone used to show interview times in emails, e.g. "Asia/Kolkata".</summary>
+    public string DisplayTimeZone { get; set; } = "Asia/Kolkata";
+
     public bool IsSmtpConfigured => !string.IsNullOrWhiteSpace(SmtpHost);
 }

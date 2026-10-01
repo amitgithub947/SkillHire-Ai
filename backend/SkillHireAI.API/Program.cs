@@ -77,6 +77,7 @@ builder.Services.AddSingleton<IResumeStorage, ResumeStorage>();
 builder.Services.Configure<PasswordResetOptions>(builder.Configuration.GetSection(PasswordResetOptions.SectionName));
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+builder.Services.AddScoped<IInterviewNotifier, InterviewNotifier>();
 
 var passwordResetOptions = builder.Configuration.GetSection(PasswordResetOptions.SectionName).Get<PasswordResetOptions>()
     ?? new PasswordResetOptions();

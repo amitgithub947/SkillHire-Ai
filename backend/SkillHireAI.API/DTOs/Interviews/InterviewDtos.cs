@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using SkillHireAI.API.Models;
 
 namespace SkillHireAI.API.DTOs.Interviews;
@@ -21,6 +22,12 @@ public class InterviewDto
     public string? Feedback { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Only set in the response to scheduling or cancelling: whether the candidate was emailed.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? CandidateNotified { get; set; }
 }
 
 public class ScheduleInterviewDto : IValidatableObject
