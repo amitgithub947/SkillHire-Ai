@@ -20,14 +20,14 @@ export function SkillTags({ skills, highlight = [], max }: SkillTagsProps) {
           key={skill}
           className={`rounded-md px-2 py-0.5 text-xs font-medium ${
             highlighted.has(skill.toLowerCase())
-              ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-              : 'bg-slate-100 text-slate-700'
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/30'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
           }`}
         >
           {skill}
         </li>
       ))}
-      {hidden > 0 && <li className="px-1 py-0.5 text-xs text-slate-500">+{hidden} more</li>}
+      {hidden > 0 && <li className="px-1 py-0.5 text-xs text-slate-500 dark:text-slate-400">+{hidden} more</li>}
     </ul>
   )
 }

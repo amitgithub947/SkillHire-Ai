@@ -41,6 +41,22 @@ public class ResumeStorage : IResumeStorage
 
     public async Task<string> SaveAsync(IFormFile file)
     {
+        await ValidateAsync(file, AllowedTypes.Keys, "Only PDF, DOC and DOCX files are allowed.");
+
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var storedName = $"{Guid.NewGuid():N}{extension}";
+        await using var output = File.Create(GetPath(storedName));
+        await file.CopyToAsync(output);
+
+        return storedName;
+    }
+
+    /// <summary>
+    /// Checks size, extension and the file's first bytes. Also used by the resume analyzer,
+    /// which only accepts PDFs.
+    /// </summary>
+    public static async Task ValidateAsync(IFormFile file, IEnumerable<string> allowedExtensions, string wrongTypeMessage)
+    {
         if (file.Length == 0)
         {
             throw new AppException("The selected file is empty.");
@@ -52,27 +68,19 @@ public class ResumeStorage : IResumeStorage
         }
 
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        if (!AllowedTypes.TryGetValue(extension, out var type))
+        if (!allowedExtensions.Contains(extension) || !AllowedTypes.TryGetValue(extension, out var type))
         {
-            throw new AppException("Only PDF, DOC and DOCX files are allowed.");
+            throw new AppException(wrongTypeMessage);
         }
 
         // Check the file's first bytes so a renamed .exe can't pass as a .pdf.
-        await using (var check = file.OpenReadStream())
+        await using var check = file.OpenReadStream();
+        var header = new byte[type.Signature.Length];
+        var read = await check.ReadAtLeastAsync(header, header.Length, throwOnEndOfStream: false);
+        if (read < header.Length || !header.AsSpan().SequenceEqual(type.Signature))
         {
-            var header = new byte[type.Signature.Length];
-            var read = await check.ReadAtLeastAsync(header, header.Length, throwOnEndOfStream: false);
-            if (read < header.Length || !header.AsSpan().SequenceEqual(type.Signature))
-            {
-                throw new AppException($"The file content does not look like a valid {extension} file.");
-            }
+            throw new AppException($"The file content does not look like a valid {extension} file.");
         }
-
-        var storedName = $"{Guid.NewGuid():N}{extension}";
-        await using var output = File.Create(GetPath(storedName));
-        await file.CopyToAsync(output);
-
-        return storedName;
     }
 
     public ResumeFile? Open(string storedName, string downloadName)

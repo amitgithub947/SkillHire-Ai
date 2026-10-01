@@ -12,4 +12,6 @@ public class User
     // A user has at most one profile, depending on their role.
     public Employer? Employer { get; set; }
     public Candidate? Candidate { get; set; }
+
+    public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
 }

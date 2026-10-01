@@ -274,6 +274,44 @@ namespace SkillHireAI.API.Migrations
                     b.ToTable("Jobs");
                 });
 
+            modelBuilder.Entity("SkillHireAI.API.Models.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("PasswordResetTokens");
+                });
+
             modelBuilder.Entity("SkillHireAI.API.Models.ResumeAnalysis", b =>
                 {
                     b.Property<int>("Id")
@@ -299,6 +337,28 @@ namespace SkillHireAI.API.Migrations
 
                     b.Property<string>("ExtractedSkills")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Projects")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResumeFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Technologies")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("TotalExperienceYears")
+                        .HasPrecision(4, 1)
+                        .HasColumnType("decimal(4,1)");
 
                     b.HasKey("Id");
 
@@ -408,6 +468,17 @@ namespace SkillHireAI.API.Migrations
                     b.Navigation("Employer");
                 });
 
+            modelBuilder.Entity("SkillHireAI.API.Models.PasswordResetToken", b =>
+                {
+                    b.HasOne("SkillHireAI.API.Models.User", "User")
+                        .WithMany("PasswordResetTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SkillHireAI.API.Models.ResumeAnalysis", b =>
                 {
                     b.HasOne("SkillHireAI.API.Models.Candidate", "Candidate")
@@ -446,6 +517,8 @@ namespace SkillHireAI.API.Migrations
                     b.Navigation("Candidate");
 
                     b.Navigation("Employer");
+
+                    b.Navigation("PasswordResetTokens");
                 });
 #pragma warning restore 612, 618
         }

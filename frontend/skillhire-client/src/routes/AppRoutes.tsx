@@ -10,6 +10,7 @@ import JobDetails from '../pages/candidate/JobDetails'
 import JobList from '../pages/candidate/JobList'
 import MyApplications from '../pages/candidate/MyApplications'
 import MyInterviews from '../pages/candidate/MyInterviews'
+import ResumeAnalysis from '../pages/candidate/ResumeAnalysis'
 import ResumeUpload from '../pages/candidate/ResumeUpload'
 import Applications from '../pages/employer/Applications'
 import CandidateDetails from '../pages/employer/CandidateDetails'
@@ -19,9 +20,11 @@ import EmployerDashboard from '../pages/employer/EmployerDashboard'
 import MyJobs from '../pages/employer/MyJobs'
 import PostJob from '../pages/employer/PostJob'
 import ScheduleInterview from '../pages/employer/ScheduleInterview'
+import ForgotPassword from '../pages/ForgotPassword'
 import Login from '../pages/Login'
 import NotFound from '../pages/NotFound'
 import Register from '../pages/Register'
+import ResetPassword from '../pages/ResetPassword'
 import Unauthorized from '../pages/Unauthorized'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
@@ -40,6 +43,8 @@ export function AppRoutes() {
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
 
       {/* Any logged-in user gets the shared layout; each group then checks the role. */}
@@ -66,6 +71,7 @@ export function AppRoutes() {
             <Route path="/candidate" element={<CandidateDashboard />} />
             <Route path="/candidate/profile" element={<CandidateProfile />} />
             <Route path="/candidate/resume" element={<ResumeUpload />} />
+            <Route path="/candidate/resume/analysis" element={<ResumeAnalysis />} />
             <Route path="/candidate/jobs" element={<JobList />} />
             <Route path="/candidate/jobs/:id" element={<JobDetails />} />
             <Route path="/candidate/applications" element={<MyApplications />} />

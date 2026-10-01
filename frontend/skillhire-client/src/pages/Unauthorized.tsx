@@ -9,8 +9,8 @@ export default function Unauthorized() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <Logo className="h-20 w-auto" />
-      <h1 className="mt-8 text-3xl font-bold text-brand-navy">Access denied</h1>
-      <p className="mt-2 max-w-md text-slate-500">
+      <h1 className="mt-8 text-3xl font-bold text-brand-navy dark:text-slate-100">Access denied</h1>
+      <p className="mt-2 max-w-md text-slate-500 dark:text-slate-400">
         Your account does not have permission to open this page.
       </p>
       <Link

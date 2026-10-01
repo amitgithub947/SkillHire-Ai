@@ -31,6 +31,28 @@ export interface RegisterRequest {
   companyName?: string
 }
 
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface VerifyOtpRequest {
+  email: string
+  otp: string
+}
+
+export interface ResetPasswordRequest extends VerifyOtpRequest {
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface MessageResponse {
+  message: string
+}
+
+export interface VerifyOtpResponse extends MessageResponse {
+  expiresAt: string
+}
+
 export interface StoredSession {
   token: string
   expiresAt: string

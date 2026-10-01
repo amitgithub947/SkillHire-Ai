@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SkillHireAI.API.DTOs.Auth;
 using SkillHireAI.API.Services;
 
@@ -10,11 +11,15 @@ namespace SkillHireAI.API.Controllers;
 [Produces("application/json")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    public const string PasswordResetRateLimitPolicy = "password-reset";
 
-    public AuthController(IAuthService authService)
+    private readonly IAuthService _authService;
+    private readonly IPasswordResetService _passwordResetService;
+
+    public AuthController(IAuthService authService, IPasswordResetService passwordResetService)
     {
         _authService = authService;
+        _passwordResetService = passwordResetService;
     }
 
     /// <summary>Create an Employer or Candidate account and return a JWT.</summary>
@@ -48,5 +53,44 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<UserDto>> Me()
     {
         return Ok(await _authService.GetUserAsync(User.GetUserId()));
+    }
+
+    /// <summary>
+    /// Email a 6-digit reset code to an Employer or Candidate account. Always returns the same
+    /// message, whether or not the account exists. Admin accounts never get a code.
+    /// </summary>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [EnableRateLimiting(PasswordResetRateLimitPolicy)]
+    [ProducesResponseType(typeof(MessageResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    public async Task<ActionResult<MessageResponseDto>> ForgotPassword(ForgotPasswordRequestDto request, CancellationToken cancellationToken)
+    {
+        return Ok(await _passwordResetService.RequestCodeAsync(request, cancellationToken));
+    }
+
+    /// <summary>Check a reset code before showing the "new password" form. The code stays usable.</summary>
+    [HttpPost("verify-otp")]
+    [AllowAnonymous]
+    [EnableRateLimiting(PasswordResetRateLimitPolicy)]
+    [ProducesResponseType(typeof(VerifyOtpResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    public async Task<ActionResult<VerifyOtpResponseDto>> VerifyOtp(VerifyOtpRequestDto request, CancellationToken cancellationToken)
+    {
+        return Ok(await _passwordResetService.VerifyCodeAsync(request, cancellationToken));
+    }
+
+    /// <summary>Set a new password using a valid code. The code can only be used once.</summary>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [EnableRateLimiting(PasswordResetRateLimitPolicy)]
+    [ProducesResponseType(typeof(MessageResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    public async Task<ActionResult<MessageResponseDto>> ResetPassword(ResetPasswordRequestDto request, CancellationToken cancellationToken)
+    {
+        return Ok(await _passwordResetService.ResetPasswordAsync(request, cancellationToken));
     }
 }

@@ -115,7 +115,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2"
+        className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
       >
         {saved && <Alert variant="success">Profile saved.</Alert>}
         {serverError && <Alert variant="error">{serverError}</Alert>}
@@ -155,7 +155,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
             error={errors.skills}
           />
           {!errors.skills && (
-            <p className="mt-1.5 text-sm text-slate-500">Separate skills with commas.</p>
+            <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">Separate skills with commas.</p>
           )}
           {skillPreview.length > 0 && (
             <div className="mt-3">
@@ -197,7 +197,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           error={errors.resumeUrl}
         />
 
-        <div className="flex justify-end border-t border-slate-100 pt-6">
+        <div className="flex justify-end border-t border-slate-100 dark:border-slate-800 pt-6">
           <Button type="submit" isLoading={isSaving}>
             Save profile
           </Button>
@@ -205,13 +205,13 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
       </form>
 
       <aside className="h-fit space-y-6">
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Profile status</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Profile status</p>
           {profile.isComplete ? (
-            <p className="mt-3 text-sm font-medium text-emerald-700">Your profile is complete.</p>
+            <p className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-300">Your profile is complete.</p>
           ) : (
             <>
-              <p className="mt-3 text-sm text-slate-600">Complete these to stand out:</p>
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">Complete these to stand out:</p>
               <ul className="mt-2 space-y-1.5 text-sm">
                 <Check done={Boolean(profile.phone)} label="Phone number" />
                 <Check done={Boolean(profile.location)} label="Location" />
@@ -220,18 +220,18 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
               </ul>
             </>
           )}
-          <p className="mt-4 text-sm text-slate-500">Experience: {formatExperience(profile.experienceYears)}</p>
+          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Experience: {formatExperience(profile.experienceYears)}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Resume</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Resume</p>
           {profile.resumeFileName ? (
-            <p className="mt-3 break-all text-sm text-slate-700">
+            <p className="mt-3 break-all text-sm text-slate-700 dark:text-slate-200">
               <span className="font-medium">{profile.resumeFileName}</span>
-              <span className="block text-xs text-slate-500">Uploaded {formatDate(profile.resumeUploadedAt)}</span>
+              <span className="block text-xs text-slate-500 dark:text-slate-400">Uploaded {formatDate(profile.resumeUploadedAt)}</span>
             </p>
           ) : (
-            <p className="mt-3 text-sm text-slate-600">
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
               {profile.resumeUrl ? 'Using your resume link.' : 'No resume uploaded yet.'}
             </p>
           )}
@@ -240,9 +240,9 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           </ButtonLink>
         </div>
 
-        <p className="px-1 text-xs text-slate-500">
+        <p className="px-1 text-xs text-slate-500 dark:text-slate-400">
           Your name and email come from your account.{' '}
-          <Link to="/candidate/jobs" className="font-medium text-brand-blue hover:underline">
+          <Link to="/candidate/jobs" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
             Browse jobs
           </Link>
         </p>
@@ -253,11 +253,11 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
 
 function Check({ done, label }: { done: boolean; label: string }) {
   return (
-    <li className={`flex items-center gap-2 ${done ? 'text-emerald-700' : 'text-slate-500'}`}>
+    <li className={`flex items-center gap-2 ${done ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-500 dark:text-slate-400'}`}>
       <span
         aria-hidden="true"
         className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
-          done ? 'bg-emerald-500 text-white' : 'border border-slate-300'
+          done ? 'bg-emerald-500 text-white' : 'border border-slate-300 dark:border-slate-600'
         }`}
       >
         {done ? '✓' : ''}

@@ -23,7 +23,7 @@ export function CompanyLogo({ name, logoUrl, size = 'sm' }: CompanyLogoProps) {
         src={logoUrl}
         alt={`${name} logo`}
         onError={() => setFailedUrl(logoUrl)}
-        className={`${dimensions} shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1`}
+        className={`${dimensions} shrink-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 object-contain p-1`}
       />
     )
   }

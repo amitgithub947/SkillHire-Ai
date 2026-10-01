@@ -32,6 +32,10 @@ public class ExceptionHandlingMiddleware
         {
             await WriteProblemAsync(context, ex.StatusCode, ex.Message);
         }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // The browser went away (e.g. the user left the page during a slow AI call).
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception for {Method} {Path}", context.Request.Method, context.Request.Path);
@@ -69,6 +73,10 @@ public class ExceptionHandlingMiddleware
         StatusCodes.Status403Forbidden => "Forbidden",
         StatusCodes.Status404NotFound => "Not Found",
         StatusCodes.Status409Conflict => "Conflict",
+        StatusCodes.Status422UnprocessableEntity => "Unprocessable Content",
+        StatusCodes.Status429TooManyRequests => "Too Many Requests",
+        StatusCodes.Status502BadGateway => "Bad Gateway",
+        StatusCodes.Status503ServiceUnavailable => "Service Unavailable",
         _ => "Server Error"
     };
 }

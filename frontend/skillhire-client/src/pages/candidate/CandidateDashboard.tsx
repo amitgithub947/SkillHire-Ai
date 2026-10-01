@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { RecommendedJobs } from '../../components/ai/RecommendedJobs'
 import { Alert } from '../../components/Alert'
 import { ApplicationStatusBadge } from '../../components/applications/ApplicationStatusBadge'
 import { ButtonLink } from '../../components/Button'
@@ -60,6 +61,8 @@ export default function CandidateDashboard() {
         <StatCard label="Selected" value={data.applications.selected} tone="emerald" />
       </div>
 
+      <RecommendedJobs />
+
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <section>
           <SectionHeader title="Upcoming interviews" to="/candidate/interviews" show={data.upcomingInterviews.length > 0} />
@@ -83,13 +86,13 @@ export default function CandidateDashboard() {
               action={<ButtonLink to="/candidate/jobs">Browse jobs</ButtonLink>}
             />
           ) : (
-            <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-sm">
+            <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
               {data.recentApplications.map((application) => (
                 <li key={application.id} className="flex items-center gap-4 px-5 py-4">
                   <CompanyLogo name={application.companyName} logoUrl={application.companyLogoUrl} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-brand-navy">{application.jobTitle}</p>
-                    <p className="truncate text-sm text-slate-500">
+                    <p className="truncate font-medium text-brand-navy dark:text-slate-100">{application.jobTitle}</p>
+                    <p className="truncate text-sm text-slate-500 dark:text-slate-400">
                       {application.companyName} · Applied {formatDate(application.appliedAt)}
                     </p>
                   </div>
@@ -120,9 +123,9 @@ export default function CandidateDashboard() {
 function SectionHeader({ title, to, show }: { title: string; to: string; show: boolean }) {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <h2 className="text-lg font-semibold text-brand-navy">{title}</h2>
+      <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">{title}</h2>
       {show && (
-        <Link to={to} className="text-sm font-semibold text-brand-blue hover:underline">
+        <Link to={to} className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline">
           View all
         </Link>
       )}

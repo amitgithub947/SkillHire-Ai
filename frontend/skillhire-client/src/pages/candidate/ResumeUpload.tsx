@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { ResumeAnalyzerCard } from '../../components/ai/ResumeAnalyzerCard'
 import { Alert } from '../../components/Alert'
 import { Button } from '../../components/Button'
 import { ErrorState } from '../../components/ErrorState'
@@ -97,16 +98,16 @@ export default function ResumeUpload() {
         {message && <Alert variant="success">{message}</Alert>}
         {actionError && <Alert variant="error">{actionError}</Alert>}
 
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Current resume</h2>
+        <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Current resume</h2>
           {profile.resumeFileName ? (
             <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-50 text-xs font-bold text-red-600">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-50 dark:bg-red-500/10 text-xs font-bold text-red-600 dark:text-red-400">
                 {profile.resumeFileName.split('.').pop()?.toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="break-all font-medium text-brand-navy">{profile.resumeFileName}</p>
-                <p className="text-sm text-slate-500">Uploaded {formatDate(profile.resumeUploadedAt)}</p>
+                <p className="break-all font-medium text-brand-navy dark:text-slate-100">{profile.resumeFileName}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Uploaded {formatDate(profile.resumeUploadedAt)}</p>
               </div>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" onClick={() => setIsPreviewing(true)}>
@@ -118,11 +119,11 @@ export default function ResumeUpload() {
               </div>
             </div>
           ) : (
-            <p className="mt-3 text-sm text-slate-600">
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
               {profile.resumeUrl ? (
                 <>
                   No file uploaded. You are using a resume link:{' '}
-                  <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="break-all text-brand-blue hover:underline">
+                  <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="break-all text-brand-blue dark:text-blue-400 hover:underline">
                     {profile.resumeUrl}
                   </a>
                 </>
@@ -133,8 +134,10 @@ export default function ResumeUpload() {
           )}
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <ResumeAnalyzerCard savedFileName={profile.resumeFileName} />
+
+        <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {profile.resumeFileName ? 'Replace resume' : 'Upload resume'}
           </h2>
 
@@ -146,12 +149,12 @@ export default function ResumeUpload() {
             onDragLeave={() => setIsDragging(false)}
             onDrop={handleDrop}
             className={`mt-4 flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition ${
-              isDragging ? 'border-brand-blue bg-blue-50' : fileError ? 'border-red-300 bg-red-50/40' : 'border-slate-300'
+              isDragging ? 'border-brand-blue bg-blue-50 dark:bg-blue-500/10' : fileError ? 'border-red-300 dark:border-red-500/40 bg-red-50/40 dark:bg-red-500/5' : 'border-slate-300 dark:border-slate-600'
             }`}
           >
-            <p className="font-medium text-brand-navy">Drag and drop your resume here</p>
-            <p className="mt-1 text-sm text-slate-500">PDF, DOC or DOCX, up to 5 MB</p>
-            <label className="mt-4 cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-within:ring-2 focus-within:ring-blue-300">
+            <p className="font-medium text-brand-navy dark:text-slate-100">Drag and drop your resume here</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">PDF, DOC or DOCX, up to 5 MB</p>
+            <label className="mt-4 cursor-pointer rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 focus-within:ring-2 focus-within:ring-blue-300">
               Choose file
               <input
                 ref={inputRef}
@@ -163,13 +166,13 @@ export default function ResumeUpload() {
             </label>
           </div>
 
-          {fileError && <p className="mt-3 text-sm text-red-600">{fileError}</p>}
+          {fileError && <p className="mt-3 text-sm text-red-600 dark:text-red-400">{fileError}</p>}
 
           {file && (
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 px-4 py-3">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 px-4 py-3">
               <p className="min-w-0 break-all text-sm">
-                <span className="font-medium text-slate-800">{file.name}</span>{' '}
-                <span className="text-slate-500">({formatFileSize(file.size)})</span>
+                <span className="font-medium text-slate-800 dark:text-slate-100">{file.name}</span>{' '}
+                <span className="text-slate-500 dark:text-slate-400">({formatFileSize(file.size)})</span>
               </p>
               <div className="flex gap-2">
                 <Button
@@ -192,16 +195,16 @@ export default function ResumeUpload() {
 
           {isUploading && (
             <div className="mt-4" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div className="h-full bg-brand-blue transition-all" style={{ width: `${progress}%` }} />
               </div>
-              <p className="mt-1 text-xs text-slate-500">Uploading… {progress}%</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Uploading… {progress}%</p>
             </div>
           )}
 
-          <p className="mt-5 text-sm text-slate-500">
+          <p className="mt-5 text-sm text-slate-500 dark:text-slate-400">
             Prefer a link (Google Drive, Dropbox)? Add it on your{' '}
-            <Link to="/candidate/profile" className="font-medium text-brand-blue hover:underline">
+            <Link to="/candidate/profile" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
               profile
             </Link>
             .
@@ -232,7 +235,7 @@ export default function ResumeUpload() {
             </>
           }
         >
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             Employers you already applied to will no longer be able to open this file. You will need a resume to apply for
             new jobs.
           </p>

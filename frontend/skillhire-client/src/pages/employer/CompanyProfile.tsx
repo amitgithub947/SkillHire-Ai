@@ -105,7 +105,7 @@ function ProfileForm({ profile, onSaved }: { profile: EmployerProfile; onSaved: 
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2"
+        className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
       >
         {saved && <Alert variant="success">Company profile saved.</Alert>}
         {serverError && <Alert variant="error">{serverError}</Alert>}
@@ -159,31 +159,31 @@ function ProfileForm({ profile, onSaved }: { profile: EmployerProfile; onSaved: 
           hint={`${values.companyDescription.length}/2000 characters`}
         />
 
-        <div className="flex justify-end border-t border-slate-100 pt-6">
+        <div className="flex justify-end border-t border-slate-100 dark:border-slate-800 pt-6">
           <Button type="submit" isLoading={isSaving}>
             Save profile
           </Button>
         </div>
       </form>
 
-      <aside className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview</p>
+      <aside className="h-fit rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Preview</p>
         <div className="mt-4 flex items-center gap-4">
           <CompanyLogo name={values.companyName || 'Company'} logoUrl={emptyToNull(values.logoUrl)} size="lg" />
           <div className="min-w-0">
-            <p className="truncate text-lg font-semibold text-brand-navy">{values.companyName || 'Company name'}</p>
-            <p className="text-sm text-slate-500">{values.location || 'Location'}</p>
+            <p className="truncate text-lg font-semibold text-brand-navy dark:text-slate-100">{values.companyName || 'Company name'}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{values.location || 'Location'}</p>
           </div>
         </div>
         {values.website && (
-          <p className="mt-4 truncate text-sm text-brand-blue">{values.website}</p>
+          <p className="mt-4 truncate text-sm text-brand-blue dark:text-blue-400">{values.website}</p>
         )}
-        <p className="mt-4 whitespace-pre-line text-sm text-slate-600">
+        <p className="mt-4 whitespace-pre-line text-sm text-slate-600 dark:text-slate-300">
           {values.companyDescription || 'Add a short description of your company.'}
         </p>
-        <div className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-500">
+        <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 text-sm text-slate-500 dark:text-slate-400">
           <p>
-            Contact: <span className="font-medium text-slate-700">{profile.contactName}</span>
+            Contact: <span className="font-medium text-slate-700 dark:text-slate-200">{profile.contactName}</span>
           </p>
           <p>{profile.contactEmail}</p>
         </div>

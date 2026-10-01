@@ -20,9 +20,9 @@ const TABS: FilterTab<Tab>[] = [
 ]
 
 const ROLE_BADGE: Record<AdminUser['role'], string> = {
-  Admin: 'bg-rose-100 text-rose-700',
-  Employer: 'bg-blue-100 text-blue-700',
-  Candidate: 'bg-violet-100 text-violet-700',
+  Admin: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300',
+  Employer: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300',
+  Candidate: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300',
 }
 
 export default function ManageUsers() {
@@ -84,17 +84,17 @@ function EmployersTable({ search }: { search: string }) {
             <Td>
               <div className="flex items-center gap-3">
                 <CompanyLogo name={e.companyName} logoUrl={e.logoUrl} />
-                <span className="font-semibold text-brand-navy">{e.companyName}</span>
+                <span className="font-semibold text-brand-navy dark:text-slate-100">{e.companyName}</span>
               </div>
             </Td>
             <Td>
-              <p className="font-medium text-slate-700">{e.contactName}</p>
-              <p className="text-slate-500">{e.email}</p>
+              <p className="font-medium text-slate-700 dark:text-slate-200">{e.contactName}</p>
+              <p className="text-slate-500 dark:text-slate-400">{e.email}</p>
             </Td>
             <Td>{e.location ?? '—'}</Td>
             <Td>
               {e.website ? (
-                <a href={e.website} target="_blank" rel="noreferrer" className="text-brand-blue hover:underline">
+                <a href={e.website} target="_blank" rel="noreferrer" className="text-brand-blue dark:text-blue-400 hover:underline">
                   {e.website.replace(/^https?:\/\//, '')}
                 </a>
               ) : (
@@ -152,9 +152,9 @@ function ListState({ isLoading, error, onRetry, isEmpty, label, children }: List
 
 function Table({ headers, children }: { headers: string[]; children: ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
-        <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-sm">
+        <thead className="bg-slate-50 dark:bg-slate-800/60 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           <tr>
             {headers.map((h) => (
               <th key={h} className="px-5 py-3">
@@ -163,7 +163,7 @@ function Table({ headers, children }: { headers: string[]; children: ReactNode }
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">{children}</tbody>
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">{children}</tbody>
       </table>
     </div>
   )
@@ -177,6 +177,6 @@ interface TdProps {
 }
 
 function Td({ children, strong, muted, wrap }: TdProps) {
-  const tone = strong ? 'font-semibold text-brand-navy' : muted ? 'text-slate-500' : 'text-slate-700'
+  const tone = strong ? 'font-semibold text-brand-navy dark:text-slate-100' : muted ? 'text-slate-500 dark:text-slate-400' : 'text-slate-700 dark:text-slate-200'
   return <td className={`${wrap ? '' : 'whitespace-nowrap'} px-5 py-4 align-middle ${tone}`}>{children}</td>
 }

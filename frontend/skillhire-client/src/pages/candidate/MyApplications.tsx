@@ -117,12 +117,12 @@ function ApplicationCard({ application, onView }: { application: CandidateApplic
   const next = application.interviews.find((i) => i.status === 'Scheduled')
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <article className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-start gap-4">
         <CompanyLogo name={application.companyName} logoUrl={application.companyLogoUrl} />
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-brand-navy">{application.jobTitle}</h3>
-          <p className="text-sm text-slate-500">
+          <h3 className="font-semibold text-brand-navy dark:text-slate-100">{application.jobTitle}</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {application.companyName}
             {application.jobLocation && ` · ${application.jobLocation}`}
           </p>
@@ -141,7 +141,7 @@ function ApplicationCard({ application, onView }: { application: CandidateApplic
       </div>
 
       {next && (
-        <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div className="mt-5 rounded-lg border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
           <span className="font-semibold">Interview:</span> {formatDateTime(next.interviewDate)}
           {next.meetingLink && (
             <>
@@ -205,7 +205,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
 
   const footer = confirmWithdraw ? (
     <>
-      <span className="mr-auto self-center text-sm text-slate-600">Withdraw this application?</span>
+      <span className="mr-auto self-center text-sm text-slate-600 dark:text-slate-300">Withdraw this application?</span>
       <Button variant="secondary" onClick={() => setConfirmWithdraw(false)} disabled={busy}>
         Keep it
       </Button>
@@ -249,23 +249,23 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="font-medium text-slate-700">{application.companyName}</p>
-            <p className="text-sm text-slate-500">Applied {formatDateTime(application.appliedAt)}</p>
+            <p className="font-medium text-slate-700 dark:text-slate-200">{application.companyName}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Applied {formatDateTime(application.appliedAt)}</p>
           </div>
           <ApplicationStatusBadge status={application.status} />
         </div>
 
         <ApplicationProgress status={application.status} hadInterview={application.interviews.length > 0} />
-        <p className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">{STATUS_HELP[application.status]}</p>
+        <p className="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{STATUS_HELP[application.status]}</p>
 
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-slate-700">Cover letter</h4>
+            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Cover letter</h4>
             {canChange && !isEditing && !confirmWithdraw && (
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="text-sm font-semibold text-brand-blue hover:underline"
+                className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline"
               >
                 Edit
               </button>
@@ -281,12 +281,12 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
               hint={`${coverLetter.length}/3000 characters`}
             />
           ) : (
-            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               {application.coverLetter ?? 'No cover letter was included.'}
             </p>
           )}
           {!canChange && (
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
               The employer has reviewed this application, so it can no longer be edited or withdrawn.
             </p>
           )}
@@ -294,7 +294,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
 
         {application.interviews.length > 0 && (
           <div>
-            <h4 className="mb-3 text-sm font-semibold text-slate-700">Interviews</h4>
+            <h4 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Interviews</h4>
             <div className="space-y-3">
               {application.interviews.map((interview) => (
                 <InterviewCard key={interview.id} interview={interview} perspective="candidate" />
@@ -306,7 +306,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
         {application.jobStatus === 'Approved' && (
           <Link
             to={`/candidate/jobs/${application.jobId}`}
-            className="inline-block text-sm font-semibold text-brand-blue hover:underline"
+            className="inline-block text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline"
           >
             View job posting →
           </Link>

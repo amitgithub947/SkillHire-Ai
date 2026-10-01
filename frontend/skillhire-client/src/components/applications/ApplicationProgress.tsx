@@ -30,16 +30,16 @@ function buildSteps(status: ApplicationStatus, hadInterview: boolean): Step[] {
 
 const DOT: Record<Step['state'], string> = {
   done: 'bg-emerald-500 text-white',
-  current: 'bg-brand-blue text-white ring-4 ring-blue-100',
-  upcoming: 'bg-slate-200 text-slate-500',
+  current: 'bg-brand-blue text-white ring-4 ring-blue-100 dark:ring-blue-500/30',
+  upcoming: 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
   rejected: 'bg-red-500 text-white',
 }
 
 const LABEL: Record<Step['state'], string> = {
-  done: 'text-slate-700',
-  current: 'font-semibold text-brand-blue',
+  done: 'text-slate-700 dark:text-slate-200',
+  current: 'font-semibold text-brand-blue dark:text-blue-400',
   upcoming: 'text-slate-400',
-  rejected: 'font-semibold text-red-600',
+  rejected: 'font-semibold text-red-600 dark:text-red-400',
 }
 
 /** Horizontal tracker: Applied → Shortlisted → Interview → Selected / Not selected. */
@@ -54,7 +54,7 @@ export function ApplicationProgress({ status, hadInterview = false }: { status: 
             <span
               aria-hidden="true"
               className={`absolute top-3.5 right-1/2 h-0.5 w-full -translate-y-1/2 ${
-                step.state === 'upcoming' ? 'bg-slate-200' : step.state === 'rejected' ? 'bg-red-200' : 'bg-emerald-300'
+                step.state === 'upcoming' ? 'bg-slate-200 dark:bg-slate-700' : step.state === 'rejected' ? 'bg-red-200 dark:bg-red-500/25' : 'bg-emerald-300'
               }`}
             />
           )}

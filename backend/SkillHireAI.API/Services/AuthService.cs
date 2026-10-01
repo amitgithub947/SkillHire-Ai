@@ -97,5 +97,5 @@ public class AuthService : IAuthService
         Role = user.Role.ToString()
     };
 
-    private static string NormalizeEmail(string email) => email.Trim().ToLowerInvariant();
+    internal static string NormalizeEmail(string email) => email.Trim().ToLowerInvariant();
 }

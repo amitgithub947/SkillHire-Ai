@@ -141,10 +141,10 @@ export default function MyJobs() {
             </>
           }
         >
-          <div className="space-y-3 text-sm text-slate-600">
+          <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
             {closeError && <Alert variant="error">{closeError}</Alert>}
             <p>
-              <span className="font-semibold text-slate-800">{closing.title}</span> will stop accepting candidates.
+              <span className="font-semibold text-slate-800 dark:text-slate-100">{closing.title}</span> will stop accepting candidates.
               Closed jobs cannot be edited or reopened.
             </p>
           </div>

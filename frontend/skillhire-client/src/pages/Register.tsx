@@ -7,6 +7,7 @@ import { SubmitButton } from '../components/SubmitButton'
 import { useAuth } from '../context/useAuth'
 import { parseApiError } from '../services/errors'
 import type { RegisterRequest, RegisterRole } from '../types/auth'
+import { emailError, passwordError, withoutEmpty } from '../utils/validation'
 
 type RegisterForm = Required<RegisterRequest>
 type RegisterErrors = Partial<Record<keyof RegisterForm, string>>
@@ -24,19 +25,15 @@ function validate(form: RegisterForm): RegisterErrors {
   if (!name) errors.name = 'Name is required.'
   else if (name.length < 2) errors.name = 'Name must be at least 2 characters.'
 
-  if (!form.email.trim()) errors.email = 'Email is required.'
-  else if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Enter a valid email address.'
-
-  if (form.password.length < 8) errors.password = 'Password must be at least 8 characters long.'
-  else if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password))
-    errors.password = 'Password must contain at least one letter and one number.'
+  errors.email = emailError(form.email)
+  errors.password = passwordError(form.password)
 
   if (form.confirmPassword !== form.password) errors.confirmPassword = 'Passwords do not match.'
 
   if (form.role === 'Employer' && !form.companyName.trim())
     errors.companyName = 'Company name is required for employers.'
 
-  return errors
+  return withoutEmpty(errors)
 }
 
 export default function Register() {
@@ -96,7 +93,7 @@ export default function Register() {
         {serverError && <Alert variant="error">{serverError}</Alert>}
 
         <fieldset>
-          <legend className="mb-2 block text-sm font-medium text-slate-700">I want to join as</legend>
+          <legend className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">I want to join as</legend>
           <div className="grid grid-cols-2 gap-3">
             {ROLE_OPTIONS.map((option) => {
               const selected = form.role === option.value
@@ -108,12 +105,12 @@ export default function Register() {
                   onClick={() => selectRole(option.value)}
                   className={`rounded-lg border-2 p-3 text-left transition ${
                     selected
-                      ? 'border-brand-blue bg-blue-50'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      ? 'border-brand-blue bg-blue-50 dark:bg-blue-500/10'
+                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
-                  <span className="block text-sm font-semibold text-brand-navy">{option.value}</span>
-                  <span className="mt-0.5 block text-xs text-slate-500">{option.description}</span>
+                  <span className="block text-sm font-semibold text-brand-navy dark:text-slate-100">{option.value}</span>
+                  <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">{option.description}</span>
                 </button>
               )
             })}
@@ -181,9 +178,9 @@ export default function Register() {
         </SubmitButton>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-brand-blue hover:underline">
+        <Link to="/login" className="font-semibold text-brand-blue dark:text-blue-400 hover:underline">
           Log in
         </Link>
       </p>

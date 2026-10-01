@@ -113,7 +113,7 @@ export function JobForm({ initialJob, submitLabel, onSubmit, onCancel }: JobForm
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
       {serverError && <Alert variant="error">{serverError}</Alert>}
 
       <FormField
@@ -199,11 +199,11 @@ export function JobForm({ initialJob, submitLabel, onSubmit, onCancel }: JobForm
         onChange={handleChange}
         error={errors.skills}
       />
-      <p className="-mt-4 text-sm text-slate-500">
+      <p className="-mt-4 text-sm text-slate-500 dark:text-slate-400">
         Separate skills with commas. Candidates use these to filter jobs.
       </p>
 
-      <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-6">
+      <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 dark:border-slate-800 pt-6">
         <Button variant="secondary" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>

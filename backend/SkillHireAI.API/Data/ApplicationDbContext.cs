@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Application> Applications => Set<Application>();
     public DbSet<Interview> Interviews => Set<Interview>();
     public DbSet<ResumeAnalysis> ResumeAnalyses => Set<ResumeAnalysis>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -128,6 +129,25 @@ public class ApplicationDbContext : DbContext
             entity.Property(i => i.Notes).HasMaxLength(1000);
             entity.Property(i => i.Feedback).HasMaxLength(2000);
             entity.HasIndex(i => i.InterviewDate);
+        });
+
+        modelBuilder.Entity<ResumeAnalysis>(entity =>
+        {
+            entity.Property(r => r.ResumeFileName).HasMaxLength(255);
+            entity.Property(r => r.Summary).HasMaxLength(2000);
+            entity.Property(r => r.TotalExperienceYears).HasPrecision(4, 1);
+            entity.Property(r => r.Model).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.Property(t => t.CodeHash).HasMaxLength(64).IsRequired();
+            entity.HasIndex(t => new { t.UserId, t.CreatedAt });
+
+            entity.HasOne(t => t.User)
+                .WithMany(u => u.PasswordResetTokens)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Dark mode follows the "dark" class on <html> (set by ThemeProvider), not the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-navy: #0f1c3f;
   --color-brand-blue: #2563eb;
@@ -8,6 +11,15 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+html {
+  color-scheme: light;
+}
+
+/* Makes native controls (date pickers, scrollbars, select menus) dark too. */
+html.dark {
+  color-scheme: dark;
+}
+
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  @apply bg-slate-50 text-slate-800 antialiased transition-colors duration-200 dark:bg-slate-950 dark:text-slate-200;
 }

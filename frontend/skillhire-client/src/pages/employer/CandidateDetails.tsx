@@ -70,16 +70,16 @@ export default function CandidateDetails() {
     <>
       <Link
         to={`/employer/applications?jobId=${data.jobId}`}
-        className="mb-6 inline-block text-sm font-medium text-slate-500 hover:text-brand-blue"
+        className="mb-6 inline-block text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-blue-400"
       >
         ← Applications for {data.jobTitle}
       </Link>
 
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy sm:text-3xl">{data.candidateName}</h1>
-          <p className="mt-1.5 text-slate-500">
-            Applied for <span className="font-medium text-slate-700">{data.jobTitle}</span> on{' '}
+          <h1 className="text-2xl font-bold text-brand-navy dark:text-slate-100 sm:text-3xl">{data.candidateName}</h1>
+          <p className="mt-1.5 text-slate-500 dark:text-slate-400">
+            Applied for <span className="font-medium text-slate-700 dark:text-slate-200">{data.jobTitle}</span> on{' '}
             {formatDateTime(data.appliedAt)}
           </p>
         </div>
@@ -93,11 +93,11 @@ export default function CandidateDetails() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy">Candidate profile</h2>
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
+            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Candidate profile</h2>
             <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
               <Fact label="Email">
-                <a href={`mailto:${data.candidateEmail}`} className="text-brand-blue hover:underline">
+                <a href={`mailto:${data.candidateEmail}`} className="text-brand-blue dark:text-blue-400 hover:underline">
                   {data.candidateEmail}
                 </a>
               </Fact>
@@ -107,37 +107,37 @@ export default function CandidateDetails() {
             </dl>
 
             <div className="mt-6">
-              <h3 className="mb-2 text-sm font-semibold text-slate-700">Skills</h3>
+              <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Skills</h3>
               {data.candidateSkills.length > 0 ? (
                 <>
                   <SkillTags skills={data.candidateSkills} highlight={jobSkills} />
                   {jobSkills.length > 0 && (
-                    <p className="mt-2 text-xs text-slate-500">Skills that match the job are highlighted in green.</p>
+                    <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">Skills that match the job are highlighted in green.</p>
                   )}
                 </>
               ) : (
-                <p className="text-sm text-slate-500">No skills listed.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No skills listed.</p>
               )}
             </div>
 
             <div className="mt-6">
-              <h3 className="mb-1.5 text-sm font-semibold text-slate-700">Experience summary</h3>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+              <h3 className="mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">Experience summary</h3>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                 {data.candidateExperience ?? 'No summary provided.'}
               </p>
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy">Cover letter</h2>
-            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
+            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Cover letter</h2>
+            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               {data.coverLetter ?? 'The candidate did not include a cover letter.'}
             </p>
           </section>
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-brand-navy">Interviews</h2>
+              <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Interviews</h2>
               {canScheduleInterview(data) && (
                 <ButtonLink to={`/employer/applications/${data.id}/interview`} size="sm" variant="secondary">
                   Schedule interview
@@ -145,7 +145,7 @@ export default function CandidateDetails() {
               )}
             </div>
             {data.interviews.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-8 text-center text-sm text-slate-500">
+              <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                 No interviews yet.
               </p>
             ) : (
@@ -183,14 +183,14 @@ export default function CandidateDetails() {
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-36 lg:self-start">
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="font-semibold text-brand-navy">Hiring progress</h2>
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h2 className="font-semibold text-brand-navy dark:text-slate-100">Hiring progress</h2>
             <div className="mt-5">
               <ApplicationProgress status={status} hadInterview={data.interviews.length > 0} />
             </div>
 
             {isFinal ? (
-              <p className="mt-6 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <p className="mt-6 rounded-lg bg-slate-50 dark:bg-slate-800/60 px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                 This application is {status === 'Selected' ? 'complete: the candidate was selected' : 'closed: the candidate was rejected'}.
               </p>
             ) : (
@@ -217,22 +217,22 @@ export default function CandidateDetails() {
             )}
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="font-semibold text-brand-navy">Resume</h2>
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h2 className="font-semibold text-brand-navy dark:text-slate-100">Resume</h2>
             {data.resumeFileName ? (
               <>
-                <p className="mt-2 break-all text-sm text-slate-600">{data.resumeFileName}</p>
+                <p className="mt-2 break-all text-sm text-slate-600 dark:text-slate-300">{data.resumeFileName}</p>
                 <Button variant="secondary" size="sm" className="mt-4" onClick={() => setIsPreviewingResume(true)}>
                   View resume
                 </Button>
               </>
             ) : (
-              !data.resumeUrl && <p className="mt-2 text-sm text-slate-500">No resume file uploaded.</p>
+              !data.resumeUrl && <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No resume file uploaded.</p>
             )}
             {data.resumeUrl && (
               <p className="mt-4 text-sm">
-                <span className="text-slate-500">Resume link: </span>
-                <a href={data.resumeUrl} target="_blank" rel="noreferrer" className="break-all font-medium text-brand-blue hover:underline">
+                <span className="text-slate-500 dark:text-slate-400">Resume link: </span>
+                <a href={data.resumeUrl} target="_blank" rel="noreferrer" className="break-all font-medium text-brand-blue dark:text-blue-400 hover:underline">
                   {data.resumeUrl}
                 </a>
               </p>
@@ -264,7 +264,7 @@ export default function CandidateDetails() {
             </>
           }
         >
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             {data.candidateName} will see this application as not selected. Any scheduled interview will be cancelled. This
             cannot be undone.
           </p>
@@ -333,7 +333,7 @@ function InterviewOutcomeModal({ interview, status, onClose, onSaved }: Intervie
     >
       <div className="space-y-4">
         {error && <Alert variant="error">{error}</Alert>}
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           {formatDateTime(interview.interviewDate)} with {interview.candidateName}.
           {!completing && ' If this was the only interview, the candidate goes back to the shortlist.'}
         </p>
@@ -354,8 +354,8 @@ function InterviewOutcomeModal({ interview, status, onClose, onSaved }: Intervie
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-1 font-medium text-slate-800">{children}</dd>
+      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="mt-1 font-medium text-slate-800 dark:text-slate-100">{children}</dd>
     </div>
   )
 }

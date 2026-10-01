@@ -35,7 +35,7 @@ export function ResumePreviewModal({ title, load, onClose }: ResumePreviewModalP
           <a
             href={url}
             download={data.fileName}
-            className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800/60"
           >
             Download {data.fileName}
           </a>
@@ -47,9 +47,9 @@ export function ResumePreviewModal({ title, load, onClose }: ResumePreviewModalP
       ) : error || !url ? (
         <ErrorState message={error ?? 'Could not load the resume.'} onRetry={reload} />
       ) : isPdf ? (
-        <iframe src={url} title={title} className="h-[70vh] w-full rounded-lg border border-slate-200" />
+        <iframe src={url} title={title} className="h-[70vh] w-full rounded-lg border border-slate-200 dark:border-slate-800" />
       ) : (
-        <p className="py-10 text-center text-sm text-slate-600">
+        <p className="py-10 text-center text-sm text-slate-600 dark:text-slate-300">
           Word documents can't be previewed in the browser. Use the download button below to open it.
         </p>
       )}

@@ -45,9 +45,9 @@ export default function EmployerDashboard() {
       </div>
 
       <div className="mt-10 mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-brand-navy">Applications</h2>
+        <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Applications</h2>
         {data.applications.total > 0 && (
-          <Link to="/employer/applications" className="text-sm font-semibold text-brand-blue hover:underline">
+          <Link to="/employer/applications" className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline">
             Review applications
           </Link>
         )}
@@ -62,7 +62,7 @@ export default function EmployerDashboard() {
 
       {data.upcomingInterviews.length > 0 && (
         <>
-          <h2 className="mt-10 mb-4 text-lg font-semibold text-brand-navy">Upcoming interviews</h2>
+          <h2 className="mt-10 mb-4 text-lg font-semibold text-brand-navy dark:text-slate-100">Upcoming interviews</h2>
           <div className="grid gap-3 lg:grid-cols-2">
             {data.upcomingInterviews.map((interview) => (
               <InterviewCard
@@ -81,9 +81,9 @@ export default function EmployerDashboard() {
       )}
 
       <div className="mt-10 mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-brand-navy">Recent jobs</h2>
+        <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Recent jobs</h2>
         {data.recentJobs.length > 0 && (
-          <Link to="/employer/jobs" className="text-sm font-semibold text-brand-blue hover:underline">
+          <Link to="/employer/jobs" className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline">
             View all
           </Link>
         )}

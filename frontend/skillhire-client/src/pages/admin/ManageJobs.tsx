@@ -204,9 +204,9 @@ export default function ManageJobs() {
         >
           <div className="space-y-4">
             {actionError && <Alert variant="error">{actionError}</Alert>}
-            <p className="text-sm text-slate-600">
-              Tell <span className="font-semibold text-slate-800">{rejecting.companyName}</span> why{' '}
-              <span className="font-semibold text-slate-800">{rejecting.title}</span> was rejected. They can edit the
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              Tell <span className="font-semibold text-slate-800 dark:text-slate-100">{rejecting.companyName}</span> why{' '}
+              <span className="font-semibold text-slate-800 dark:text-slate-100">{rejecting.title}</span> was rejected. They can edit the
               job and resubmit it.
             </p>
             <TextAreaField

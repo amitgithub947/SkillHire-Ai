@@ -1,10 +1,10 @@
 import type { JobStatus } from '../types/job'
 
 const STYLES: Record<JobStatus, string> = {
-  Pending: 'bg-amber-100 text-amber-800',
-  Approved: 'bg-emerald-100 text-emerald-800',
-  Rejected: 'bg-red-100 text-red-800',
-  Closed: 'bg-slate-200 text-slate-700',
+  Pending: 'bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-200',
+  Approved: 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-200',
+  Rejected: 'bg-red-100 dark:bg-red-500/15 text-red-800 dark:text-red-200',
+  Closed: 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200',
 }
 
 const LABELS: Record<JobStatus, string> = {

@@ -125,7 +125,7 @@ export default function ScheduleInterview() {
 
   return (
     <>
-      <Link to={backTo} className="mb-6 inline-block text-sm font-medium text-slate-500 hover:text-brand-blue">
+      <Link to={backTo} className="mb-6 inline-block text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-blue-400">
         ← Back to {data.candidateName}
       </Link>
       <PageHeader title="Schedule interview" subtitle="The candidate sees these details on their interviews page." />
@@ -134,7 +134,7 @@ export default function ScheduleInterview() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2"
+          className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
         >
           {serverError && <Alert variant="error">{serverError}</Alert>}
 
@@ -179,7 +179,7 @@ export default function ScheduleInterview() {
             hint={`${values.notes.length}/1000 characters`}
           />
 
-          <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-6">
+          <div className="flex flex-wrap justify-end gap-3 border-t border-slate-100 dark:border-slate-800 pt-6">
             <ButtonLink to={backTo} variant="secondary">
               Cancel
             </ButtonLink>
@@ -189,18 +189,18 @@ export default function ScheduleInterview() {
           </div>
         </form>
 
-        <aside className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Candidate</p>
-          <p className="mt-3 font-semibold text-brand-navy">{data.candidateName}</p>
-          <p className="text-sm text-slate-500">{data.candidateEmail}</p>
-          {data.candidatePhone && <p className="text-sm text-slate-500">{data.candidatePhone}</p>}
-          <p className="mt-4 text-sm text-slate-600">
+        <aside className="h-fit rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Candidate</p>
+          <p className="mt-3 font-semibold text-brand-navy dark:text-slate-100">{data.candidateName}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{data.candidateEmail}</p>
+          {data.candidatePhone && <p className="text-sm text-slate-500 dark:text-slate-400">{data.candidatePhone}</p>}
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
             Applying for <span className="font-medium">{data.jobTitle}</span>
           </p>
           <div className="mt-3">
             <ApplicationStatusBadge status={data.status} />
           </div>
-          <p className="mt-4 text-xs text-slate-500">
+          <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
             Scheduling moves the application to “Interview scheduled”. Times are in your local time zone.
           </p>
         </aside>

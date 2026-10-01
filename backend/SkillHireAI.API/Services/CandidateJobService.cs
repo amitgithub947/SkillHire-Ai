@@ -111,6 +111,12 @@ public class CandidateJobService : ICandidateJobService
         return rows.Select(ToListing).ToList();
     }
 
+    public async Task<List<JobListingDto>> GetListingsAsync(int candidateId, IReadOnlyCollection<int> jobIds)
+    {
+        var rows = await Project(ApprovedJobs().Where(j => jobIds.Contains(j.Id)), candidateId).ToListAsync();
+        return rows.Select(ToListing).ToList();
+    }
+
     private IQueryable<Job> ApprovedJobs() => _db.Jobs.Where(j => j.Status == JobStatus.Approved);
 
     private static IQueryable<ListingRow> Project(IQueryable<Job> jobs, int candidateId) =>

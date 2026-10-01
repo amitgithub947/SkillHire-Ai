@@ -23,28 +23,28 @@ export function Modal({ title, onClose, children, footer, size = 'md' }: ModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-slate-900/50 dark:bg-black/70" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative flex max-h-[90vh] w-full flex-col rounded-2xl bg-white shadow-2xl ${WIDTHS[size]}`}
+        className={`relative flex max-h-[90vh] w-full flex-col rounded-2xl bg-white dark:bg-slate-900 shadow-2xl dark:ring-1 dark:ring-slate-700 ${WIDTHS[size]}`}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
-          <h2 id="modal-title" className="text-lg font-semibold text-brand-navy">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+          <h2 id="modal-title" className="text-lg font-semibold text-brand-navy dark:text-slate-100">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded-md px-2 text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-md px-2 text-2xl leading-none text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
           >
             ×
           </button>
         </div>
         <div className="overflow-y-auto px-6 py-5">{children}</div>
-        {footer && <div className="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">{footer}</div>}
+        {footer && <div className="flex justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4">{footer}</div>}
       </div>
     </div>
   )

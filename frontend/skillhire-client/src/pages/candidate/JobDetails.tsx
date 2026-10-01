@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { SkillMatchPanel } from '../../components/ai/SkillMatchPanel'
 import { Alert } from '../../components/Alert'
 import { ApplicationProgress } from '../../components/applications/ApplicationProgress'
 import { ApplicationStatusBadge } from '../../components/applications/ApplicationStatusBadge'
@@ -39,23 +40,23 @@ export default function JobDetails() {
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="mb-6 text-sm font-medium text-slate-500 hover:text-brand-blue"
+        className="mb-6 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-blue-400"
       >
         ← Back to jobs
       </button>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
             <div className="flex items-start gap-4">
               <CompanyLogo name={data.companyName} logoUrl={data.companyLogoUrl} size="lg" />
               <div className="min-w-0">
-                <h1 className="text-2xl font-bold text-brand-navy">{data.title}</h1>
-                <p className="mt-1 text-slate-500">{data.companyName}</p>
+                <h1 className="text-2xl font-bold text-brand-navy dark:text-slate-100">{data.title}</h1>
+                <p className="mt-1 text-slate-500 dark:text-slate-400">{data.companyName}</p>
               </div>
             </div>
 
-            <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-4">
+            <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
               <Fact label="Location" value={data.location ?? '—'} />
               <Fact label="Salary" value={formatSalary(data.salaryMin, data.salaryMax)} />
               <Fact label="Experience" value={formatExperience(data.experienceRequired)} />
@@ -64,10 +65,10 @@ export default function JobDetails() {
 
             {data.skills.length > 0 && (
               <div className="mt-6">
-                <h2 className="mb-2 text-sm font-semibold text-slate-700">Key skills</h2>
+                <h2 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Key skills</h2>
                 <SkillTags skills={data.skills} highlight={profile.data?.skills} />
                 {profile.data && profile.data.skills.length > 0 && (
-                  <p className="mt-2 text-xs text-slate-500">Skills you have are highlighted in green.</p>
+                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">Skills you have are highlighted in green.</p>
                 )}
               </div>
             )}
@@ -76,19 +77,19 @@ export default function JobDetails() {
             <Section title="Requirements" text={data.requirements} />
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy">About {data.companyName}</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
+            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">About {data.companyName}</h2>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               {data.companyDescription ?? 'This company has not added a description yet.'}
             </p>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              {data.companyLocation && <span className="text-slate-600">{data.companyLocation}</span>}
+              {data.companyLocation && <span className="text-slate-600 dark:text-slate-300">{data.companyLocation}</span>}
               {data.companyWebsite && (
                 <a
                   href={data.companyWebsite}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-medium text-brand-blue hover:underline"
+                  className="font-medium text-brand-blue dark:text-blue-400 hover:underline"
                 >
                   {data.companyWebsite}
                 </a>
@@ -97,8 +98,9 @@ export default function JobDetails() {
           </section>
         </div>
 
-        <aside className="lg:sticky lg:top-36 lg:self-start">
+        <aside className="space-y-6">
           <ApplyPanel job={data} profile={profile.data} onApplied={job.setData} onConflict={job.reload} />
+          <SkillMatchPanel key={data.id} jobId={data.id} />
         </aside>
       </div>
     </>
@@ -118,7 +120,7 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
   const [justApplied, setJustApplied] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const card = 'rounded-xl border border-slate-200 bg-white p-6 shadow-sm'
+  const card = 'rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm'
 
   if (job.applicationStatus) {
     return (
@@ -129,7 +131,7 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
           </div>
         )}
         <div className="flex items-center justify-between gap-3">
-          <h2 className="font-semibold text-brand-navy">Your application</h2>
+          <h2 className="font-semibold text-brand-navy dark:text-slate-100">Your application</h2>
           <ApplicationStatusBadge status={job.applicationStatus} />
         </div>
         <div className="mt-5">
@@ -168,8 +170,8 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
   if (profile && !profile.hasResume) {
     return (
       <div className={card}>
-        <h2 className="font-semibold text-brand-navy">Apply for this job</h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <h2 className="font-semibold text-brand-navy dark:text-slate-100">Apply for this job</h2>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
           Employers need to see your resume. Upload one (or add a resume link) before applying.
         </p>
         <ButtonLink to="/candidate/resume" className="mt-5 w-full">
@@ -181,8 +183,8 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
 
   return (
     <form onSubmit={handleSubmit} noValidate className={card}>
-      <h2 className="font-semibold text-brand-navy">Apply for this job</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <h2 className="font-semibold text-brand-navy dark:text-slate-100">Apply for this job</h2>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Your profile and resume{profile?.resumeFileName ? ` (${profile.resumeFileName})` : ''} will be shared with{' '}
         {job.companyName}.
       </p>
@@ -208,9 +210,9 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
         Apply now
       </Button>
       {profile && !profile.isComplete && (
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Tip: a complete{' '}
-          <Link to="/candidate/profile" className="font-medium text-brand-blue hover:underline">
+          <Link to="/candidate/profile" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
             profile
           </Link>{' '}
           makes a better first impression.
@@ -223,8 +225,8 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="mt-1 font-medium text-slate-800">{value}</dd>
+      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="mt-1 font-medium text-slate-800 dark:text-slate-100">{value}</dd>
     </div>
   )
 }
@@ -232,8 +234,8 @@ function Fact({ label, value }: { label: string; value: string }) {
 function Section({ title, text }: { title: string; text: string }) {
   return (
     <div className="mt-6">
-      <h2 className="text-sm font-semibold text-slate-700">{title}</h2>
-      <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-600">{text}</p>
+      <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{title}</h2>
+      <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">{text}</p>
     </div>
   )
 }

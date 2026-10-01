@@ -86,7 +86,7 @@ export default function JobList() {
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="mb-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+        className="mb-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6"
         role="search"
       >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -125,7 +125,7 @@ export default function JobList() {
           />
         </div>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Experience shows jobs needing that many years or fewer. With several skills, a job must match all of them.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -162,8 +162,8 @@ export default function JobList() {
         />
       ) : (
         <>
-          <p className="mb-4 text-sm text-slate-600">
-            <span className="font-semibold text-brand-navy">{data.totalCount}</span>{' '}
+          <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
+            <span className="font-semibold text-brand-navy dark:text-slate-100">{data.totalCount}</span>{' '}
             {data.totalCount === 1 ? 'job' : 'jobs'} found
           </p>
           <div className="grid gap-4 lg:grid-cols-2">

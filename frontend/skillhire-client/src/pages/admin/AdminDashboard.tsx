@@ -30,7 +30,7 @@ export default function AdminDashboard() {
         }
       />
 
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Users</h2>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Users</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard label="Total users" value={data.users.total} tone="blue" />
         <StatCard label="Employers" value={data.users.employers} tone="violet" />
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
         <StatCard label="Admins" value={data.users.admins} tone="slate" />
       </div>
 
-      <h2 className="mt-8 mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Jobs</h2>
+      <h2 className="mt-8 mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Jobs</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <StatCard label="Total jobs" value={data.jobs.total} tone="blue" />
         <StatCard label="Pending review" value={data.jobs.pending} tone="amber" />
@@ -48,9 +48,9 @@ export default function AdminDashboard() {
       </div>
 
       <div className="mt-10 mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-brand-navy">Oldest jobs awaiting review</h2>
+        <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Oldest jobs awaiting review</h2>
         {data.jobs.pending > 0 && (
-          <Link to="/admin/jobs" className="text-sm font-semibold text-brand-blue hover:underline">
+          <Link to="/admin/jobs" className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline">
             Open review queue
           </Link>
         )}
