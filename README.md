@@ -338,6 +338,52 @@ On Gemini's free tier the quota is small (about 20 requests for this model per q
 window). When it runs out, AI features answer "The AI service is busy right now".
 Temporary "high demand" errors from Gemini are retried twice automatically.
 
+## Deployment (frontend on Vercel, backend on Azure)
+
+### Backend: Azure App Service + Azure SQL
+
+1. Create an **Azure SQL Database**. Under the server's **Networking**, allow Azure
+   services to access the server.
+2. Create an **App Service** (Linux, runtime **.NET 10**).
+3. In the App Service, open **Settings → Environment variables** and add the settings
+   below. Nested settings use `__` (two underscores).
+
+| Name | Value |
+| ---- | ----- |
+| `ConnectionStrings__DefaultConnection` | The ADO.NET connection string from Azure SQL (with your password filled in) |
+| `Jwt__Key` | A new random secret, e.g. from `openssl rand -base64 48`. Do not reuse the dev key |
+| `Cors__AllowedOrigins__0` | `https://your-app.vercel.app` (no trailing slash) |
+| `AI__ApiKey` | Your Gemini API key |
+| `AdminSeed__Email` / `AdminSeed__Password` / `AdminSeed__Name` | The production admin account (use a strong password) |
+| `Email__SmtpHost` / `Email__Username` / `Email__Password` / `Email__FromAddress` | SMTP settings. With Gmail, use an app password and set `FromAddress` to the same Gmail address |
+| `Email__AppBaseUrl` | `https://your-app.vercel.app` (used for links in emails) |
+| `Storage__ResumeFolder` | `/home/data/resumes` (kept across restarts and redeploys) |
+
+4. Deploy:
+
+```bash
+cd backend/SkillHireAI.API
+dotnet publish -c Release -o publish
+cd publish && zip -r ../app.zip . && cd ..
+az webapp deploy --resource-group <group> --name <app-name> --src-path app.zip --type zip
+```
+
+On startup the API creates or updates the database tables (`Database:MigrateOnStartup`)
+and creates the admin account if it does not exist yet. Swagger is turned off in
+production. Without SMTP settings, password reset codes and interview emails are not sent.
+
+### Frontend: Vercel
+
+1. Import the GitHub repo in Vercel and set **Root Directory** to `frontend/skillhire-client`
+   (framework preset: Vite).
+2. Add the environment variable `VITE_API_URL` = `https://<app-name>.azurewebsites.net`
+   (no trailing slash).
+3. Deploy. `vercel.json` sends every route to `index.html`, so refreshing a page like
+   `/candidate/interviews` works.
+
+`VITE_API_URL` is built into the app, so redeploy on Vercel after changing it. If you add
+a custom domain later, also add it to `Cors__AllowedOrigins__1` and update `Email__AppBaseUrl`.
+
 ## Useful commands
 
 ```bash

@@ -24,8 +24,9 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing.");
 
+// Retry on short connection drops (Azure SQL can briefly disconnect or be waking up).
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure()));
 
 // ---------- JWT authentication ----------
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
@@ -190,8 +191,10 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// ---------- Apply migrations + seed admin (Development only) ----------
-if (app.Environment.IsDevelopment())
+// ---------- Apply migrations + seed admin ----------
+// Always in Development. In production only when Database:MigrateOnStartup is true.
+// The admin is only created when AdminSeed:Email and AdminSeed:Password are set.
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
