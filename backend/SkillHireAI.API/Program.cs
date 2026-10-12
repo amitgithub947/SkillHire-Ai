@@ -223,4 +223,14 @@ app.UseRateLimiter();
 
 app.MapControllers();
 
+// ---------- Health checks ----------
+// /api/health only wakes the app, so it is safe for an uptime monitor to ping often.
+// /api/health/db also wakes the database; the React app calls it once when a visitor arrives.
+// Do not ping /api/health/db on a schedule: it keeps a serverless database awake and uses up its free quota.
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
+app.MapGet("/api/health/db", async (ApplicationDbContext db, CancellationToken cancellationToken) =>
+    await db.Database.CanConnectAsync(cancellationToken)
+        ? Results.Ok(new { status = "ok" })
+        : Results.Problem("The database is not reachable yet.", statusCode: StatusCodes.Status503ServiceUnavailable));
+
 app.Run();

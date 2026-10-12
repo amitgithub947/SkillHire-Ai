@@ -402,6 +402,20 @@ On startup the API creates or updates the database tables (`Database:MigrateOnSt
 and creates the admin account if it does not exist yet. Swagger is turned off in
 production. Without SMTP settings, password reset codes and interview emails are not sent.
 
+### Sleeping on free plans
+
+On the Free App Service plan the app shuts down after about 20 idle minutes, and the free
+serverless Azure SQL database pauses after 60. The first request after that can take about
+a minute. To soften this, the React app calls `/api/health/db` as soon as someone opens the
+site, and shows a "Waking up the server" banner when a request takes more than 5 seconds.
+
+- To keep the app itself awake for free, point an uptime monitor (e.g. UptimeRobot) at
+  `https://<app-name>.azurewebsites.net/api/health` every 10 minutes. This does not touch the
+  database.
+- Never ping `/api/health/db` on a schedule. Keeping the free database awake uses up its
+  monthly free compute in a few days, after which it stays paused until the next month.
+- On a paid plan (Basic B1 or higher), turn on **Settings → Configuration → Always on** instead.
+
 ### Frontend: Vercel
 
 1. Import the GitHub repo in Vercel and set **Root Directory** to `frontend/skillhire-client`
