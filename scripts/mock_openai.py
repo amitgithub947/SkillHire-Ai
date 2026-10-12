@@ -1,15 +1,19 @@
 """
-A tiny stand-in for the OpenAI Chat Completions API, for local testing without a real key.
+A tiny stand-in for the OpenRouter Chat Completions API, for local testing without a real key.
 
     python3 scripts/mock_openai.py            # listens on http://localhost:5099
 
 Run the API against it:
 
-    AI__ApiKey=test-key AI__BaseUrl=http://localhost:5099/v1/ dotnet run --launch-profile http
+    OPENROUTER_API_KEY=test-key AI__Endpoint=http://localhost:5099/v1/chat/completions dotnet run --launch-profile http
 
-It checks each request like OpenAI's strict structured outputs would, remembers the last
-request (GET /__last) so tests can check no personal data was sent, and can simulate
-failures (POST /__mode with {"mode": "ok" | "429" | "401" | "500" | "badjson" | "refusal"}).
+It checks each request like strict structured outputs would, remembers the last request
+and headers (GET /__last) so tests can check no personal data was sent, and can simulate
+OpenRouter's answers (POST /__mode with {"mode": ...}):
+  ok, 429, 401, 402, 404, 500   HTTP errors
+  error200                      provider error inside a 200 response
+  badjson, fenced, outofrange   broken, ```json-wrapped and out-of-range answers
+  refusal                       the model refuses
 """
 
 import json
@@ -18,7 +22,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = 5099
 API_KEY = "test-key"
-state = {"mode": "ok", "last": None, "calls": 0}
+state = {"mode": "ok", "last": None, "headers": None, "calls": 0}
 
 
 def check_strict_schema(node, path="schema"):
@@ -127,7 +131,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/__last":
-            self.send_json(200, {"last": state["last"], "calls": state["calls"]})
+            self.send_json(200, {"last": state["last"], "headers": state["headers"], "calls": state["calls"]})
         else:
             self.send_json(404, {"error": "not found"})
 
@@ -145,17 +149,24 @@ class Handler(BaseHTTPRequestHandler):
 
         body = self.read_body()
         state["last"] = body
+        state["headers"] = {k: v for k, v in self.headers.items() if k.lower() != "authorization"}
         mode = state["mode"]
-        if mode == "429":
-            return self.send_json(429, {"error": {"message": "Rate limit reached"}})
-        if mode == "401":
-            return self.send_json(401, {"error": {"message": "Incorrect API key provided."}})
-        if mode == "500":
-            return self.send_json(500, {"error": {"message": "Server error"}})
+        if mode in ("429", "401", "402", "404", "500"):
+            messages = {
+                "429": "Rate limit exceeded: free-models-per-min",
+                "401": "Incorrect API key provided.",
+                "402": "Insufficient credits",
+                "404": "No endpoints found that can handle the requested parameters.",
+                "500": "Server error",
+            }
+            return self.send_json(int(mode), {"error": {"code": int(mode), "message": messages[mode]}})
+        if mode == "error200":
+            return self.send_json(200, {"error": {"code": 502, "message": "Provider returned error"}})
 
         try:
             fmt = body["response_format"]
             assert fmt["type"] == "json_schema" and fmt["json_schema"]["strict"] is True
+            assert body.get("provider", {}).get("require_parameters") is True
             check_strict_schema(fmt["json_schema"]["schema"])
             name = fmt["json_schema"]["name"]
             messages = body["messages"]
@@ -167,6 +178,10 @@ class Handler(BaseHTTPRequestHandler):
         message = {"role": "assistant", "content": json.dumps(content), "refusal": None}
         if mode == "badjson":
             message["content"] = "this is not json"
+        if mode == "fenced":
+            message["content"] = f"Here is the result:\n```json\n{json.dumps(content, indent=2)}\n```"
+        if mode == "outofrange":
+            message["content"] = json.dumps({**content, "matchPercentage": 150})
         if mode == "refusal":
             message = {"role": "assistant", "content": None, "refusal": "I can't help with that."}
 

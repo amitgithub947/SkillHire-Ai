@@ -3,18 +3,24 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using SkillHireAI.API.Middleware;
 
 namespace SkillHireAI.API.Services.AI;
 
 /// <summary>
-/// Calls an OpenAI-compatible Chat Completions API (Gemini by default) with structured
-/// outputs (a JSON schema), so every answer can be read straight into a C# class.
+/// Calls OpenRouter's OpenAI-compatible Chat Completions API with structured outputs
+/// (a JSON schema), checks the answer and reads it into a C# class.
 /// </summary>
 public class AiClient : IAiClient
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    private const string JsonOnlyRule = "Reply with one JSON object that matches the response schema and nothing else.";
+
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
+    };
 
     private readonly HttpClient _http;
     private readonly AiOptions _options;
@@ -97,28 +103,39 @@ public class AiClient : IAiClient
             throw NotConfigured();
         }
 
-        var body = new
+        var body = new JsonObject
         {
-            model = _options.Model,
-            messages = new object[]
+            ["model"] = _options.Model,
+            ["messages"] = new JsonArray(
+                new JsonObject { ["role"] = "system", ["content"] = $"{systemPrompt}\n{JsonOnlyRule}" },
+                new JsonObject { ["role"] = "user", ["content"] = userMessage }),
+            ["response_format"] = new JsonObject
             {
-                new { role = "system", content = systemPrompt },
-                new { role = "user", content = userMessage }
+                ["type"] = "json_schema",
+                ["json_schema"] = new JsonObject { ["name"] = schemaName, ["strict"] = true, ["schema"] = schema.DeepClone() }
             },
-            response_format = new
-            {
-                type = "json_schema",
-                json_schema = new { name = schemaName, strict = true, schema }
-            }
+            // Only use providers that really support everything we ask for (structured outputs above all).
+            ["provider"] = new JsonObject { ["require_parameters"] = true }
         };
 
-        var json = JsonSerializer.Serialize(body);
+        if (!string.IsNullOrWhiteSpace(_options.ReasoningEffort))
+        {
+            body["reasoning"] = new JsonObject { ["effort"] = _options.ReasoningEffort, ["exclude"] = true };
+        }
+
+        var json = body.ToJsonString();
 
         // Overload errors are usually brief, so try a couple more times before giving up.
-        // 429 is not retried: on Gemini it usually means the quota is used up, and retrying burns more.
+        // 429 is not retried: free models have a small per-minute and daily quota, and retrying burns more.
         for (var attempt = 1; ; attempt++)
         {
             var (status, responseText) = await SendAsync(json, schemaName, cancellationToken);
+
+            // OpenRouter sometimes reports a provider error inside a 200 response.
+            if (status == HttpStatusCode.OK && ErrorInBody(responseText) is { } bodyStatus)
+            {
+                status = bodyStatus;
+            }
 
             if (status == HttpStatusCode.OK)
             {
@@ -139,16 +156,39 @@ public class AiClient : IAiClient
     private static readonly TimeSpan[] RetryDelays = [TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(3)];
 
     private static bool IsTemporary(HttpStatusCode status) =>
-        status is HttpStatusCode.InternalServerError
+        status is HttpStatusCode.RequestTimeout or HttpStatusCode.InternalServerError
             or HttpStatusCode.BadGateway or HttpStatusCode.ServiceUnavailable or HttpStatusCode.GatewayTimeout;
+
+    /// <summary>Returns the error status when a 200 response actually carries an error.</summary>
+    private static HttpStatusCode? ErrorInBody(string responseText)
+    {
+        try
+        {
+            var root = JsonNode.Parse(responseText);
+            var error = root?["error"] ?? root?["choices"]?[0]?["error"];
+            if (error is null && root?["choices"]?[0]?["finish_reason"]?.GetValue<string>() != "error")
+            {
+                return null;
+            }
+
+            return error?["code"] is JsonValue code && code.TryGetValue(out int number) && number >= 400
+                ? (HttpStatusCode)number
+                : HttpStatusCode.BadGateway;
+        }
+        catch (Exception ex) when (ex is JsonException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
 
     private async Task<(HttpStatusCode Status, string Body)> SendAsync(string json, string schemaName, CancellationToken cancellationToken)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "chat/completions")
+        using var request = new HttpRequestMessage(HttpMethod.Post, _options.Endpoint)
         {
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+        request.Headers.TryAddWithoutValidation("X-Title", _options.AppName);
 
         try
         {
@@ -192,7 +232,14 @@ public class AiClient : IAiClient
                 throw BadGateway();
             }
 
-            return JsonSerializer.Deserialize<T>(content, JsonOptions) ?? throw BadGateway();
+            var result = JsonSerializer.Deserialize<T>(ExtractJson(content), JsonOptions);
+            if (result is null || !IsValid(result))
+            {
+                _logger.LogWarning("AI returned values outside the allowed range for {Schema}", schemaName);
+                throw BadGateway();
+            }
+
+            return result;
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or FormatException)
         {
@@ -200,6 +247,23 @@ public class AiClient : IAiClient
             throw BadGateway();
         }
     }
+
+    /// <summary>Some models wrap the JSON in ```json fences or add a sentence around it.</summary>
+    private static string ExtractJson(string content)
+    {
+        var start = content.IndexOf('{');
+        var end = content.LastIndexOf('}');
+        return start >= 0 && end > start ? content[start..(end + 1)] : content;
+    }
+
+    /// <summary>Rejects answers that parsed but make no sense (missing lists, scores outside 0-100).</summary>
+    private static bool IsValid(object result) => result switch
+    {
+        AiResumeAnalysis r => !string.IsNullOrWhiteSpace(r.Summary),
+        AiSkillMatch m => m.MatchPercentage is >= 0 and <= 100 && m.MatchedSkills is not null && m.MissingSkills is not null,
+        JobMatchList l => l.Matches is not null && l.Matches.All(j => j is not null && j.JobId > 0 && j.MatchPercentage is >= 0 and <= 100),
+        _ => true
+    };
 
     private AppException ToFriendlyError(HttpStatusCode status, string responseText, string schemaName)
     {
@@ -210,17 +274,23 @@ public class AiClient : IAiClient
         {
             case HttpStatusCode.Unauthorized:
             case HttpStatusCode.Forbidden:
-                _logger.LogError("AI provider rejected the API key ({Status}) for {Schema}: {Detail}", (int)status, schemaName, detail);
+                _logger.LogError("OpenRouter rejected the API key ({Status}) for {Schema}: {Detail}", (int)status, schemaName, detail);
+                return Unavailable("AI features are temporarily unavailable. Please try again later.");
+
+            case HttpStatusCode.PaymentRequired:
+                _logger.LogError("OpenRouter account has no credits left for {Schema}: {Detail}", schemaName, detail);
                 return Unavailable("AI features are temporarily unavailable. Please try again later.");
 
             case HttpStatusCode.TooManyRequests:
-                _logger.LogWarning("AI provider rate limit or quota reached for {Schema}: {Detail}", schemaName, detail);
+                _logger.LogWarning("OpenRouter rate limit or free quota reached for {Schema}: {Detail}", schemaName, detail);
                 return Unavailable("The AI service is busy right now. Please try again in a minute.");
 
             case HttpStatusCode.BadRequest:
             case HttpStatusCode.NotFound:
-                _logger.LogError("AI provider rejected the {Schema} request ({Status}): {Detail}", schemaName, (int)status, detail);
-                return BadGateway();
+                // Usually a wrong model id, or no provider for this model under the account's privacy settings.
+                _logger.LogError("OpenRouter rejected the {Schema} request for model {Model} ({Status}): {Detail}",
+                    schemaName, _options.Model, (int)status, detail);
+                return Unavailable("AI features are temporarily unavailable. Please try again later.");
 
             default:
                 _logger.LogWarning("AI provider returned {Status} for {Schema}: {Detail}", (int)status, schemaName, detail);

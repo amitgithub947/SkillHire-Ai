@@ -1,11 +1,11 @@
 """
 End-to-end test of the three AI features: resume analyzer, skill match and job matches.
 
-Start the mock OpenAI server and point the API at it (no real key or cost needed):
+Start the mock OpenRouter server and point the API at it (no real key or cost needed):
 
     python3 scripts/mock_openai.py
     cd backend/SkillHireAI.API
-    AI__ApiKey=test-key AI__BaseUrl=http://localhost:5099/v1/ dotnet run --launch-profile http
+    OPENROUTER_API_KEY=test-key AI__Endpoint=http://localhost:5099/v1/chat/completions dotnet run --launch-profile http
 
 Then:
     python3 scripts/ai_features_test.py [base_url] [mock_url]
@@ -231,6 +231,12 @@ check("date ranges kept", "2022 - Present" in sent and "2021 - 2022" in sent)
 check("structured output requested", last["last"]["response_format"]["json_schema"]["name"] == "resume_analysis")
 check("prompt guards against injected instructions", "untrusted" in system)
 check("api key not in request body", "test-key" not in json.dumps(last["last"]))
+check("model from configuration", last["last"]["model"] == "nvidia/nemotron-3-super-120b-a12b:free", last["last"]["model"])
+check("only providers with structured outputs", last["last"].get("provider") == {"require_parameters": True})
+check("low reasoning effort, reasoning text excluded", last["last"].get("reasoning") == {"effort": "low", "exclude": True})
+check("asks for JSON only", "JSON object" in system)
+check("app name header sent", (last["headers"] or {}).get("X-Title") == "SkillHire AI", last["headers"])
+check("no password or JWT in request", "Password" not in json.dumps(last["last"]) and "eyJ" not in json.dumps(last["last"]))
 if isinstance(analysis, dict):
     check("skills extracted", "Unit testing" in analysis.get("skills", []))
     check("technologies extracted", "ASP.NET Core" in analysis.get("technologies", []))
@@ -304,22 +310,33 @@ if isinstance(matches, list):
 top = expect("count=1", "GET", "/api/ai/job-matches?count=1", 200, neha)
 check("count limits results", isinstance(top, list) and len(top) <= 1)
 
-print("\nOpenAI errors are handled")
+print("\nOpenRouter errors are handled")
 errors = register("Candidate", f"ai.errors.{RUN}@example.com", "Arjun Nair")
 expect("give skills", "PUT", "/api/candidate/profile", 200, errors, {"skills": "C#, React", "experienceYears": 2})
 for mode, status, words in [
     ("429", 503, "busy"),
     ("401", 503, "unavailable"),
+    ("402", 503, "unavailable"),
+    ("404", 503, "unavailable"),
     ("500", 503, "trouble"),
+    ("error200", 503, "trouble"),
     ("badjson", 502, "unexpected"),
+    ("outofrange", 502, "unexpected"),
     ("refusal", 422, "could not process"),
 ]:
     mock_mode(mode)
-    d = expect(f"OpenAI {mode}", "POST", "/api/ai/skill-match", status, errors, {"jobId": job_data})
+    d = expect(f"OpenRouter {mode}", "POST", "/api/ai/skill-match", status, errors, {"jobId": job_data})
     check(f"  friendly message ({words})", words in detail(d).lower(), detail(d))
-    check("  no key or raw error leaked", "test-key" not in json.dumps(d) and "Incorrect API key" not in json.dumps(d))
+    raw = json.dumps(d)
+    check("  no key or raw error leaked", "test-key" not in raw and "Incorrect API key" not in raw and "credits" not in raw and "endpoints" not in raw)
+# A second user, so these calls stay under the 10-per-minute limit.
+recovered = register("Candidate", f"ai.recovered.{RUN}@example.com", "Meera Iyer")
+expect("give skills", "PUT", "/api/candidate/profile", 200, recovered, {"skills": "C#, React", "experienceYears": 2})
+mock_mode("fenced")
+d = expect("JSON wrapped in ```json fences still works", "POST", "/api/ai/skill-match", 200, recovered, {"jobId": job_fullstack})
+check("  fenced answer parsed", isinstance(d, dict) and 0 <= d.get("matchPercentage", -1) <= 100, d)
 mock_mode("ok")
-expect("works again after errors", "POST", "/api/ai/skill-match", 200, errors, {"jobId": job_data})
+expect("works again after errors", "POST", "/api/ai/skill-match", 200, recovered, {"jobId": job_data})
 
 print("\nRate limit (10 AI requests per minute per user)")
 limited = register("Candidate", f"ai.limit.{RUN}@example.com", "Sana Khan")

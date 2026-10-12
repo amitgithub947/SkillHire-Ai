@@ -92,18 +92,19 @@ else
     builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
 }
 
-// ---------- AI provider: Gemini by default (key comes from user secrets or environment variables only) ----------
+// ---------- AI provider: OpenRouter (key comes only from the OPENROUTER_API_KEY environment variable) ----------
 builder.Services.Configure<AiOptions>(builder.Configuration.GetSection(AiOptions.SectionName));
 builder.Services.PostConfigure<AiOptions>(options =>
-    options.ApiKey ??= builder.Configuration["GEMINI_API_KEY"]);
+    options.ApiKey = builder.Configuration[AiOptions.ApiKeyVariable]);
 
 var aiOptions = builder.Configuration.GetSection(AiOptions.SectionName).Get<AiOptions>() ?? new AiOptions();
+if (!Uri.TryCreate(aiOptions.Endpoint, UriKind.Absolute, out _))
+{
+    throw new InvalidOperationException("AI:Endpoint must be a full URL, e.g. https://openrouter.ai/api/v1/chat/completions.");
+}
 
 builder.Services.AddHttpClient<IAiClient, AiClient>(client =>
-{
-    client.BaseAddress = new Uri(aiOptions.BaseUrl.TrimEnd('/') + "/");
-    client.Timeout = TimeSpan.FromSeconds(aiOptions.TimeoutSeconds);
-});
+    client.Timeout = TimeSpan.FromSeconds(aiOptions.TimeoutSeconds));
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IAiService, AiService>();
 

@@ -1,7 +1,7 @@
 namespace SkillHireAI.API.Services.AI;
 
 /// <summary>
-/// The only place that talks to the AI provider (Gemini by default). Inputs contain skills
+/// The only place that talks to the AI provider (OpenRouter). Inputs contain skills
 /// and job details, never names, emails or phone numbers.
 /// </summary>
 public interface IAiClient

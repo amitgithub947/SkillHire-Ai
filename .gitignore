@@ -12,6 +12,9 @@ obj/
 *.suo
 .vs/
 appsettings.Production.json
+# Deploy output (contains a copy of appsettings.Development.json)
+backend/SkillHireAI.API/publish/
+backend/SkillHireAI.API/app.zip
 # Uploaded resumes (personal data)
 App_Data/
 

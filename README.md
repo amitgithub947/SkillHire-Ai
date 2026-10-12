@@ -1,7 +1,7 @@
 # SkillHire AI
 
 A role-based job recruitment platform. Employers post jobs, candidates search and apply,
-and admins run the platform. AI (Google Gemini) helps candidates with resume analysis,
+and admins run the platform. AI (through OpenRouter) helps candidates with resume analysis,
 skill-match percentages and job recommendations.
 
 **Current status: Day 5 — forgot password (email code) and dark/light theme.**
@@ -26,7 +26,7 @@ skill-match percentages and job recommendations.
 | Auth           | JWT bearer tokens, BCrypt password hashing              |
 | Authorization  | Roles: `Admin`, `Employer`, `Candidate`                 |
 | API docs       | Swagger UI                                              |
-| AI             | Google Gemini (OpenAI-compatible Chat Completions) with structured outputs, PdfPig for PDF text |
+| AI             | OpenRouter (OpenAI-compatible Chat Completions) with structured outputs, PdfPig for PDF text |
 
 ## Project structure
 
@@ -67,7 +67,7 @@ SkillHireAI/
 │   ├── ai_features_test.py             Day 4 AI endpoint checks (uses the mock below)
 │   ├── password_reset_test.py          Day 5 forgot-password checks
 │   ├── interview_email_test.py         Interview scheduled/cancelled email checks
-│   └── mock_openai.py                  Local stand-in for the AI API, no key or cost
+│   └── mock_openai.py                  Local stand-in for the OpenRouter API, no key or cost
 ├── docker-compose.yml       Local SQL Server
 └── README.md
 ```
@@ -124,7 +124,7 @@ app follows the operating system's setting.
 Admins cannot self-register. One is seeded from `appsettings.Development.json`:
 
 - Email: `admin@skillhire.ai`
-- Password: `Admin@12345`
+- Password: `Admin@2004`
 
 ## API endpoints
 
@@ -243,9 +243,11 @@ application send no email.
 
 How the AI is used:
 
-- Gemini is only called from the backend (`Services/AI/AiClient.cs`); the React app
+- OpenRouter is only called from the backend (`Services/AI/AiClient.cs`); the React app
   never sees the key.
-- Responses use structured outputs (a strict JSON schema), so they map straight to C# classes.
+- Responses use structured outputs (a strict JSON schema), and OpenRouter is told to use only
+  providers that support them. Answers are still checked: JSON wrapped in extra text is
+  unwrapped, and missing fields or scores outside 0-100 are rejected.
 - Emails, phone numbers, links and the candidate's name are removed from resume text before
   it is sent. Matching sends only skills, years of experience and a short background.
 - Skill match and job matches are guidance only. Nothing is stored on applications and no
@@ -257,6 +259,19 @@ How the AI is used:
 
 To call protected endpoints in Swagger, log in, copy the `token`, click **Authorize**
 and paste it.
+
+Testing the AI endpoints in Swagger (http://localhost:5052/swagger):
+
+1. `POST /api/auth/register` with `"role": "Candidate"`, then `POST /api/auth/login` and
+   **Authorize** with the token.
+2. `PUT /api/candidate/profile` with some skills, e.g. `{ "skills": "C#, React, SQL", "experienceYears": 2 }`.
+3. **Resume Analyzer:** `POST /api/ai/analyze-resume`, choose a text-based PDF in `file`, Execute.
+   `GET /api/ai/resume-analysis` returns the saved result.
+4. **Skill Matching:** get a job id from `GET /api/candidate/jobs`, then `POST /api/ai/skill-match`
+   with `{ "jobId": <id> }`.
+5. **AI Job Recommendations:** `GET /api/ai/job-matches?count=5`.
+
+There must be at least one approved job (an employer posts it and the admin approves it).
 
 ### API tests
 
@@ -273,7 +288,7 @@ The AI test runs against a local mock AI server, so it needs no key and costs no
 ```bash
 python3 scripts/mock_openai.py               # terminal 1
 cd backend/SkillHireAI.API                   # terminal 2
-AI__ApiKey=test-key AI__BaseUrl=http://localhost:5099/v1/ dotnet run --launch-profile http
+OPENROUTER_API_KEY=test-key AI__Endpoint=http://localhost:5099/v1/chat/completions dotnet run --launch-profile http
 python3 scripts/ai_features_test.py          # terminal 3
 ```
 
@@ -317,26 +332,41 @@ Interview emails also use `Email:AppBaseUrl` (the React app address, used for th
 "see your interviews" link) and `Email:DisplayTimeZone` (the time zone used for the
 interview time in the email, default `Asia/Kolkata`).
 
-### AI (Gemini) API key
+### AI (OpenRouter) API key
 
-The AI features use Google Gemini through its OpenAI-compatible API. The key is never
-stored in the repo and never goes into the React app (`.env` files are bundled into the
-browser). For local development use user secrets:
+The AI features use [OpenRouter](https://openrouter.ai). The key is read only from the
+`OPENROUTER_API_KEY` environment variable. It is never stored in the repo and never goes
+into the React app (`.env` files are bundled into the browser).
+
+1. Create a key at https://openrouter.ai/settings/keys.
+2. Free models only run if your account allows it: in https://openrouter.ai/settings/privacy
+   enable the option for free endpoints. Otherwise OpenRouter answers "No endpoints found"
+   and the app shows "AI features are temporarily unavailable".
+3. Start the API with the key:
 
 ```bash
 cd backend/SkillHireAI.API
-dotnet user-secrets set "AI:ApiKey" "your-gemini-key"
+export OPENROUTER_API_KEY="sk-or-v1-..."
+dotnet run --launch-profile http
 ```
 
-Or set an environment variable: `AI__ApiKey` (or `GEMINI_API_KEY`).
+(`dotnet user-secrets set "OPENROUTER_API_KEY" "sk-or-v1-..."` also works locally.)
 Without a key the app still works; AI features show "AI features are not set up".
-Other settings (`AI:Model`, default `gemini-3.8-flash`, `AI:BaseUrl`, timeout, rate limit)
-are in `appsettings.json`. Any OpenAI-compatible provider works by changing `BaseUrl`,
-`Model` and the key.
 
-On Gemini's free tier the quota is small (about 20 requests for this model per quota
-window). When it runs out, AI features answer "The AI service is busy right now".
-Temporary "high demand" errors from Gemini are retried twice automatically.
+Settings in the `AI` section of `appsettings.json`:
+
+| Setting | Default | Notes |
+| ------- | ------- | ----- |
+| `Endpoint` | `https://openrouter.ai/api/v1/chat/completions` | |
+| `Model` | `nvidia/nemotron-3-super-120b-a12b:free` | Any OpenRouter model id that supports structured outputs |
+| `ReasoningEffort` | `low` | For reasoning models. Set to `""` for models without reasoning |
+| `TimeoutSeconds` | `90` | |
+| `RequestsPerMinute` | `10` | Per user, enforced by the API |
+
+To find other free models with structured outputs, look for `:free` models on
+https://openrouter.ai/models with the "Structured outputs" filter. Free models have a
+small quota (requests per minute and per day). When it runs out, AI features answer
+"The AI service is busy right now". Temporary provider errors are retried twice.
 
 ## Deployment (frontend on Vercel, backend on Azure)
 
@@ -353,7 +383,7 @@ Temporary "high demand" errors from Gemini are retried twice automatically.
 | `ConnectionStrings__DefaultConnection` | The ADO.NET connection string from Azure SQL (with your password filled in) |
 | `Jwt__Key` | A new random secret, e.g. from `openssl rand -base64 48`. Do not reuse the dev key |
 | `Cors__AllowedOrigins__0` | `https://your-app.vercel.app` (no trailing slash) |
-| `AI__ApiKey` | Your Gemini API key |
+| `OPENROUTER_API_KEY` | Your OpenRouter API key |
 | `AdminSeed__Email` / `AdminSeed__Password` / `AdminSeed__Name` | The production admin account (use a strong password) |
 | `Email__SmtpHost` / `Email__Username` / `Email__Password` / `Email__FromAddress` | SMTP settings. With Gmail, use an app password and set `FromAddress` to the same Gmail address |
 | `Email__AppBaseUrl` | `https://your-app.vercel.app` (used for links in emails) |
