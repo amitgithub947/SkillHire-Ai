@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SkillHire AI - Codebase Guide</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #1e293b; font-size: 10.5pt; line-height: 1.5; }
+  h1, h2, h3, h4 { color: #0f1c3f; line-height: 1.25; }
+  h1 { font-size: 22pt; margin: 0 0 6px; }
+  h2 { font-size: 16pt; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 3px solid #2563eb; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 18px 0 6px; color: #1d4ed8; page-break-after: avoid; }
+  h4 { font-size: 11pt; margin: 12px 0 4px; page-break-after: avoid; }
+  p { margin: 5px 0 8px; }
+  code, .mono { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 9pt; background: #eef2ff; color: #3730a3; padding: 1px 4px; border-radius: 3px; }
+  pre { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8.6pt; background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radius: 6px; white-space: pre-wrap; page-break-inside: avoid; line-height: 1.45; }
+  pre code { background: none; color: inherit; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 9.4pt; page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  th { background: #0f1c3f; color: #fff; text-align: left; padding: 5px 7px; font-weight: 600; }
+  td { border-bottom: 1px solid #e2e8f0; padding: 5px 7px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  td:first-child { white-space: nowrap; }
+  .file { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8.8pt; color: #0f1c3f; font-weight: 600; }
+  .note { background: #eff6ff; border-left: 4px solid #2563eb; padding: 8px 12px; margin: 10px 0; border-radius: 0 6px 6px 0; page-break-inside: avoid; }
+  .warn { background: #fff7ed; border-left: 4px solid #ea580c; padding: 8px 12px; margin: 10px 0; border-radius: 0 6px 6px 0; page-break-inside: avoid; }
+  .cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+  .cover .tag { display: inline-block; background: linear-gradient(90deg, #2563eb, #7c3aed); color: #fff; padding: 4px 12px; border-radius: 99px; font-size: 10pt; font-weight: 600; width: fit-content; }
+  .cover h1 { font-size: 34pt; margin: 16px 0 8px; }
+  .cover p { font-size: 13pt; color: #475569; max-width: 150mm; }
+  .toc { page-break-after: always; }
+  .toc ol { font-size: 11pt; line-height: 1.9; }
+  .toc li li { font-size: 10pt; line-height: 1.6; }
+  .break { page-break-before: always; }
+  .pill { display: inline-block; font-size: 8pt; font-weight: 700; padding: 1px 6px; border-radius: 4px; color: #fff; }
+  .get { background: #059669; } .post { background: #2563eb; } .put { background: #d97706; } .patch { background: #7c3aed; } .del { background: #dc2626; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .box { border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; page-break-inside: avoid; }
+  .box h4 { margin-top: 2px; }
+  ul { margin: 4px 0 8px; padding-left: 20px; }
+  li { margin: 2px 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <span class="tag">Codebase Guide</span>
+  <h1>SkillHire AI</h1>
+  <p>A guide to understanding the whole project: first the <b>backend</b> (ASP.NET Core), then the <b>frontend</b> (React). What each folder and file contains, what it does, and how everything connects.</p>
+  <p style="font-size:11pt;margin-top:24px">Backend: ASP.NET Core (.NET 10) · Entity Framework Core · SQL Server · JWT<br>
+  Frontend: React 19 · TypeScript · Vite · Tailwind CSS v4<br>
+  AI: OpenRouter (free model) · Deploy: Azure (backend) + Vercel (frontend)</p>
+</section>
+
+<!-- ============ TOC ============ -->
+<section class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li>Project overview
+      <ol><li>What the project does</li><li>Tech stack</li><li>Folder structure</li><li>The journey of a request</li></ol></li>
+    <li>Backend (ASP.NET Core API)
+      <ol><li>Program.cs: how the app starts</li><li>Config files</li><li>Models: database tables</li><li>Data: DbContext, seeder, migrations</li><li>DTOs</li><li>Controllers: all API endpoints</li><li>Services: business logic</li><li>Email services</li><li>AI services</li><li>Middleware: errors</li><li>Security</li><li>Business rules (status flow)</li></ol></li>
+    <li>Frontend (React)
+      <ol><li>Config files</li><li>main.tsx and App.tsx</li><li>Routes</li><li>Context (login and theme)</li><li>Services (API calls)</li><li>Hooks</li><li>Types</li><li>Utils</li><li>Components</li><li>Pages</li></ol></li>
+    <li>Test scripts, Docker and deployment</li>
+    <li>Full example: from posting a job to the interview email</li>
+    <li>Recommended order for reading the code</li>
+  </ol>
+</section>
+
+<!-- ============ 1. OVERVIEW ============ -->
+<h2>1. Project overview</h2>
+
+<h3>1.1 What the project does</h3>
+<p>SkillHire AI is a <b>job portal</b>. It has three kinds of users:</p>
+<table>
+  <tr><th>Role</th><th>What they can do</th></tr>
+  <tr><td><b>Employer</b></td><td>Creates a company profile, posts jobs, reviews incoming applications, shortlists / rejects / selects candidates, and schedules interviews.</td></tr>
+  <tr><td><b>Candidate</b></td><td>Builds a profile and uploads a resume, searches and applies for jobs, and tracks their applications and interviews. Uses AI to analyze the resume, check skill match, and get job recommendations.</td></tr>
+  <tr><td><b>Admin</b></td><td>Sees all users, and approves or rejects jobs posted by employers. Admins cannot register; the system creates the admin account.</td></tr>
+</table>
+<p>Extra features: forgot password (OTP code by email), an email to the candidate when an interview is scheduled or cancelled, dark/light theme, and a "Waking up the server" banner when the free server is asleep.</p>
+
+<h3>1.2 Tech stack</h3>
+<table>
+  <tr><th>Part</th><th>Technology</th><th>Used for</th></tr>
+  <tr><td>Backend</td><td>ASP.NET Core Web API (.NET 10), C#</td><td>REST API: saving data, checking rules, login</td></tr>
+  <tr><td>Database</td><td>SQL Server + Entity Framework Core</td><td>Tables. EF Core maps C# classes to tables</td></tr>
+  <tr><td>Login</td><td>JWT token + BCrypt</td><td>The token identifies who is logged in. BCrypt hashes passwords</td></tr>
+  <tr><td>AI</td><td>OpenRouter (<code>nvidia/nemotron-3-super-120b-a12b:free</code>)</td><td>Resume analyzer, skill match, job recommendations</td></tr>
+  <tr><td>PDF</td><td>PdfPig</td><td>Extracting text from resume PDFs</td></tr>
+  <tr><td>Frontend</td><td>React 19 + TypeScript + Vite</td><td>User interface (pages, forms)</td></tr>
+  <tr><td>Styling</td><td>Tailwind CSS v4</td><td>Design, dark mode</td></tr>
+  <tr><td>HTTP</td><td>axios</td><td>Sending requests from the frontend to the backend</td></tr>
+  <tr><td>Routing</td><td>react-router-dom v7</td><td>Showing the right page for each URL</td></tr>
+  <tr><td>Hosting</td><td>Azure App Service + Azure SQL, Vercel</td><td>The live website</td></tr>
+</table>
+
+<h3>1.3 Folder structure</h3>
+<pre>SkillHire-Ai/
+├── backend/SkillHireAI.API/      ← ASP.NET Core API (C#)
+│   ├── Program.cs                ← the app starts here
+│   ├── Controllers/              ← API endpoints (URL → function)
+│   ├── Services/                 ← business logic (the real work)
+│   │   ├── AI/                   ← OpenRouter AI code
+│   │   └── Email/                ← email sending code
+│   ├── Models/                   ← C# classes for database tables
+│   ├── DTOs/                     ← data sent to and from the API
+│   ├── Data/                     ← DbContext, admin seeder
+│   ├── Middleware/               ← turns errors into clean JSON
+│   ├── Migrations/               ← history of database table changes
+│   └── appsettings*.json         ← settings
+├── frontend/skillhire-client/    ← React app (TypeScript)
+│   └── src/
+│       ├── main.tsx, App.tsx     ← the app starts here
+│       ├── routes/               ← which URL shows which page
+│       ├── pages/                ← full pages (admin, employer, candidate)
+│       ├── components/           ← small reusable UI pieces
+│       ├── services/             ← API calls to the backend
+│       ├── context/              ← logged-in user and theme (app-wide)
+│       ├── hooks/                ← useApi (loading + error)
+│       ├── types/                ← TypeScript types
+│       └── utils/                ← small helper functions
+├── scripts/                      ← Python test scripts
+├── docker-compose.yml            ← local SQL Server
+└── README.md                     ← setup and commands</pre>
+
+<h3>1.4 The journey of a request</h3>
+<p>Say a candidate clicks the "Apply" button. The data flows like this:</p>
+<pre>React page (JobDetails.tsx)
+   │  candidateService.apply(jobId, coverLetter)
+   ▼
+services/api.ts (axios)  →  adds the token header: "Authorization: Bearer &lt;JWT&gt;"
+   │  POST /api/candidate/applications
+   ▼
+ASP.NET Core pipeline (Program.cs): CORS → Authentication (JWT check) → Authorization (role check)
+   ▼
+CandidateApplicationsController.Apply()   ← only receives the request and passes it to the service
+   ▼
+CandidateApplicationService.ApplyAsync()  ← rules: is the job approved? already applied? resume uploaded?
+   ▼
+ApplicationDbContext (EF Core)  →  SQL Server: new row in the Applications table
+   ▼
+DTO (CandidateApplicationDto) is returned to React as JSON
+   ▼
+Success message on the page. If a rule fails: AppException → Middleware → error JSON → red Alert on the page.</pre>
+<div class="note"><b>Key idea:</b> the Controller is thin (HTTP only), the Service holds the real logic, the Model is a database table, and the DTO is the data that goes out. This pattern is the same across the whole backend.</div>
+
+<!-- ============ 2. BACKEND ============ -->
+<h2 class="break">2. Backend (ASP.NET Core API)</h2>
+<p>Folder: <code>backend/SkillHireAI.API</code>. To run it: <code>dotnet run --launch-profile http</code>, then test every endpoint in Swagger at <code>http://localhost:5052/swagger</code>.</p>
+
+<h3>2.1 Program.cs: how the app starts</h3>
+<p>This is the most important backend file. From top to bottom it does the following:</p>
+<table>
+  <tr><th>Section</th><th>What happens</th></tr>
+  <tr><td>Database</td><td>Reads <code>ConnectionStrings:DefaultConnection</code> and connects <code>ApplicationDbContext</code> to SQL Server. <code>EnableRetryOnFailure</code> retries automatically on short Azure SQL disconnects.</td></tr>
+  <tr><td>JWT authentication</td><td>Reads the <code>Jwt</code> settings (key must be at least 32 bytes). Every request's token is checked: signed with the right key, not expired, correct issuer and audience.</td></tr>
+  <tr><td>Service registration</td><td>Lines like <code>AddScoped&lt;IAuthService, AuthService&gt;()</code>. This is called <b>Dependency Injection</b>: controllers don't create services themselves, ASP.NET provides them.</td></tr>
+  <tr><td>Email</td><td>If <code>Email:SmtpHost</code> is set, uses <code>SmtpEmailSender</code> (real email); otherwise <code>ConsoleEmailSender</code> (email is printed to the console).</td></tr>
+  <tr><td>AI</td><td>Reads the <code>AI</code> section; the key comes only from the <code>OPENROUTER_API_KEY</code> environment variable. <code>AddHttpClient&lt;IAiClient, AiClient&gt;</code> registers the HttpClient.</td></tr>
+  <tr><td>Rate limiting</td><td>Two policies: <b>AI</b> (10 requests per minute per user) and <b>password-reset</b> (10 per minute per IP). Going over the limit returns 429 with a friendly message.</td></tr>
+  <tr><td>CORS</td><td>Only the sites in <code>Cors:AllowedOrigins</code> (localhost:5173, the Vercel URL) can call the API from a browser.</td></tr>
+  <tr><td>Controllers + Swagger</td><td>Enums are sent in JSON as text (<code>"Approved"</code>, not a number). Swagger has an "Authorize" button for the JWT.</td></tr>
+  <tr><td>Migrations + admin seed</td><td>In Development, or when <code>Database:MigrateOnStartup</code> is true: tables are created/updated automatically and the admin account is created (if <code>AdminSeed</code> is set).</td></tr>
+  <tr><td>Pipeline (order matters)</td><td>ExceptionHandlingMiddleware → Swagger (dev only) / HTTPS redirect (prod) → CORS → Authentication → Authorization → RateLimiter → Controllers.</td></tr>
+  <tr><td>Health checks</td><td><code>/api/health</code> (wakes only the app) and <code>/api/health/db</code> (wakes the database too).</td></tr>
+</table>
+
+<h3>2.2 Config files</h3>
+<table>
+  <tr><th>File</th><th>What it is</th></tr>
+  <tr><td class="file">appsettings.json</td><td>All default settings, <b>no secrets</b>: Jwt issuer/audience/expiry (60 min), CORS (empty), AI (endpoint, model, 90s timeout, 10 requests/min), PasswordReset (10 min code, 5 attempts, 60s resend cooldown), Email (empty SMTP, AppBaseUrl, Asia/Kolkata time zone), Database:MigrateOnStartup.</td></tr>
+  <tr><td class="file">appsettings.Development.json</td><td>Local only: Docker SQL connection string, dev JWT key, CORS for localhost:5173, admin seed (<code>admin@skillhire.ai</code>). Not used in production.</td></tr>
+  <tr><td class="file">Properties/launchSettings.json</td><td><code>dotnet run</code> profiles: <code>http</code> → <code>http://localhost:5052</code>, Development environment.</td></tr>
+  <tr><td class="file">SkillHireAI.API.csproj</td><td>Project file: .NET 10 and NuGet packages (BCrypt, JwtBearer, EF Core SqlServer + Design, PdfPig, Swashbuckle).</td></tr>
+  <tr><td class="file">SkillHireAI.API.http</td><td>Sample requests for testing the API from VS Code / Rider (register, login, me, dashboard).</td></tr>
+  <tr><td class="file">backend/dotnet-tools.json</td><td>Version of the <code>dotnet-ef</code> tool (used to create migrations).</td></tr>
+</table>
+<div class="warn"><b>Where are the secrets?</b> Locally: <code>appsettings.Development.json</code> and user-secrets. On Azure: environment variables (<code>ConnectionStrings__DefaultConnection</code>, <code>Jwt__Key</code>, <code>OPENROUTER_API_KEY</code>, ...). A double underscore <code>__</code> means a nested level in the JSON.</div>
+
+<h3>2.3 Models: database tables (folder <code>Models/</code>)</h3>
+<p>Each class is a SQL table. EF Core creates the tables from these classes.</p>
+<table>
+  <tr><th>Model / Table</th><th>Important fields</th><th>Meaning</th></tr>
+  <tr><td class="file">User</td><td>Id, Name, Email, PasswordHash, Role, CreatedAt</td><td>Everyone who logs in. Passwords are never stored in plain text, only as a BCrypt hash. Role: Admin / Employer / Candidate.</td></tr>
+  <tr><td class="file">Employer</td><td>UserId, CompanyName, CompanyDescription, Location, Website, LogoUrl</td><td>The employer's company profile (one-to-one with User).</td></tr>
+  <tr><td class="file">Candidate</td><td>UserId, Phone, Location, Skills, ExperienceYears, Experience, ResumeUrl, ResumeFileName, ResumeStoredName, ResumeUploadedAt</td><td>The candidate's profile. Skills are comma-separated text ("C#, React"). The resume file lives on disk; its name is stored here.</td></tr>
+  <tr><td class="file">Job</td><td>EmployerId, Title, Description, Requirements, Skills, Location, SalaryMin/Max, ExperienceRequired, Status, RejectionReason, CreatedAt, UpdatedAt, ReviewedAt</td><td>A job post. Status: Pending → Approved / Rejected → Closed.</td></tr>
+  <tr><td class="file">Application</td><td>JobId, CandidateId, CoverLetter, Status, AppliedAt, UpdatedAt</td><td>Which job a candidate applied to. Status: Applied, Shortlisted, Rejected, InterviewScheduled, Selected.</td></tr>
+  <tr><td class="file">Interview</td><td>ApplicationId, InterviewDate (UTC), Type, MeetingLink, Notes, Status, Feedback</td><td>Type: Online / InPerson / Phone. Status: Scheduled / Completed / Cancelled.</td></tr>
+  <tr><td class="file">ResumeAnalysis</td><td>CandidateId, ResumeFileName, Summary, TotalExperienceYears, ExtractedSkills, Technologies, Experience, Education, Projects, AIResult, Model</td><td>Result of an AI resume analysis. Lists are stored as JSON text.</td></tr>
+  <tr><td class="file">PasswordResetToken</td><td>UserId, CodeHash, ExpiresAt, VerifiedAt, UsedAt, FailedAttempts</td><td>The forgot-password OTP. Only the hash of the code is stored, never the code itself.</td></tr>
+  <tr><td class="file">Enums.cs</td><td>UserRole, JobStatus, ApplicationStatus, InterviewType, InterviewStatus</td><td>Lists of fixed values.</td></tr>
+</table>
+<pre>Relationships:
+User 1──1 Employer 1──* Job 1──* Application *──1 Candidate 1──1 User
+                                     │
+                                     └──* Interview
+Candidate 1──* ResumeAnalysis        User 1──* PasswordResetToken</pre>
+
+<h3>2.4 Data folder and Migrations</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">Data/ApplicationDbContext.cs</td><td>EF Core's main class. A <code>DbSet</code> for every table (Users, Employers, Candidates, Jobs, Applications, Interviews, ResumeAnalyses, PasswordResetTokens). <code>OnModelCreating</code> holds the rules: column lengths, unique email, relationships, delete behaviour, and a unique index so a candidate can apply to a job only once.</td></tr>
+  <tr><td class="file">Data/UtcDateTimeConverter.cs</td><td>Marks every date read from the database as UTC, so the JSON carries the correct time with a "Z" and the frontend can show it in local time.</td></tr>
+  <tr><td class="file">Data/DbSeeder.cs</td><td>Creates the admin account at startup (from <code>AdminSeed:Email/Password/Name</code>). Does nothing if the admin already exists.</td></tr>
+  <tr><td class="file">Migrations/*.cs</td><td>History of database changes, one step per file: <b>InitialCreate</b> (all main tables: Users, Candidates, Employers, Jobs, Applications, Interviews, ResumeAnalyses), then <b>EmployerProfileAndJobManagement</b>, <b>CandidateApplicationsInterviews</b> and <b>ResumeAnalysisDetails</b> (new columns and rules on those tables), and <b>PasswordResetTokens</b> (new table). After changing a model: <code>dotnet ef migrations add YourName</code>.</td></tr>
+</table>
+
+<h3>2.5 DTOs (folder <code>DTOs/</code>)</h3>
+<p><b>DTO = Data Transfer Object.</b> These classes are what travels through the API as JSON. Models are never sent out directly because they contain things like PasswordHash. DTOs also carry validation attributes (<code>[Required]</code>, <code>[EmailAddress]</code>, <code>[StringLength]</code>), so ASP.NET returns a 400 error for bad data automatically.</p>
+<table>
+  <tr><th>Folder</th><th>Files and purpose</th></tr>
+  <tr><td class="file">Auth/</td><td><code>RegisterRequestDto</code> (role must be Employer/Candidate, password needs a letter and a number, CompanyName required for Employers), <code>LoginRequestDto</code>, <code>AuthResponseDto</code> (token, expiresAt, user), <code>UserDto</code>, <code>PasswordResetDtos</code> (forgot, verify-otp, reset).</td></tr>
+  <tr><td class="file">Employers/</td><td>View/update the profile, employer dashboard numbers.</td></tr>
+  <tr><td class="file">Jobs/</td><td><code>CreateJobDto</code>/<code>UpdateJobDto</code> (SalaryMax ≥ SalaryMin), <code>JobDto</code> (employer/admin view), <code>JobListingDto</code> + <code>JobSearchQuery</code> (candidate search: search, location, experience, skills, page), <code>JobStatsDto</code>.</td></tr>
+  <tr><td class="file">Candidates/</td><td>Profile, profile update, resume upload, candidate dashboard.</td></tr>
+  <tr><td class="file">Applications/</td><td>Candidate view, employer view (with candidate details), stats.</td></tr>
+  <tr><td class="file">Interviews/</td><td><code>ScheduleInterviewDto</code>, <code>UpdateInterviewStatusDto</code>, <code>InterviewDto</code> (<code>candidateNotified</code>: whether the email was sent).</td></tr>
+  <tr><td class="file">Admin/</td><td>Admin dashboard, lists of users, employers and candidates, reject reason.</td></tr>
+  <tr><td class="file">AI/</td><td>Requests/responses for resume analysis, skill match and job matches.</td></tr>
+  <tr><td class="file">Common/PagedResult.cs</td><td>A paged list: items, page, pageSize, totalCount.</td></tr>
+  <tr><td class="file">Validation/NotLessThanAttribute.cs</td><td>Custom validation: one value must not be less than another (e.g. SalaryMax ≥ SalaryMin).</td></tr>
+</table>
+
+<h3 class="break">2.6 Controllers: all API endpoints (folder <code>Controllers/</code>)</h3>
+<p>A controller only receives the HTTP request, reads the logged-in user's id from the token (<code>User.GetUserId()</code>), calls a service, and returns the result. <code>[Authorize(Roles = "...")]</code> above the class says who may call it.</p>
+
+<h4>AuthController: <code>/api/auth</code> (public)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/register</td><td>New Employer or Candidate account, returns a token</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/login</td><td>Email + password → JWT token</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/me</td><td>Details of the logged-in user (token required)</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/forgot-password</td><td>Sends a 6-digit code by email (Employer/Candidate only)</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/verify-otp</td><td>Checks whether the code is correct</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/reset-password</td><td>Code + new password → password is changed</td></tr>
+</table>
+
+<h4>EmployerController + EmployerJobsController: <code>/api/employer</code> (Employer)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/dashboard</td><td>Job and application numbers, recent items</td></tr>
+  <tr><td><span class="pill get">GET</span> <span class="pill put">PUT</span></td><td>/profile</td><td>View / update the company profile</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/jobs?status=</td><td>All my jobs</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/jobs/{id}</td><td>One job</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/jobs</td><td>New job (starts as Pending)</td></tr>
+  <tr><td><span class="pill put">PUT</span></td><td>/jobs/{id}</td><td>Edit a job (editing an approved job sends it back to Pending)</td></tr>
+  <tr><td><span class="pill patch">PATCH</span></td><td>/jobs/{id}/close</td><td>Close a job</td></tr>
+</table>
+
+<h4>EmployerApplicationsController: <code>/api/employer</code> (Employer)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/applications?jobId=&amp;status=&amp;search=</td><td>Applications received on my jobs</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/applications/{id}</td><td>Application + candidate profile + interviews</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/applications/{id}/resume</td><td>Download the candidate's resume</td></tr>
+  <tr><td><span class="pill patch">PATCH</span></td><td>/applications/{id}/shortlist · /reject · /select</td><td>Change status (rejecting cancels scheduled interviews)</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/applications/{id}/interviews</td><td>Schedule an interview + email the candidate</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/interviews?upcoming=</td><td>All my interviews</td></tr>
+  <tr><td><span class="pill patch">PATCH</span></td><td>/interviews/{id}</td><td>Completed (with feedback) or Cancelled (sends an email)</td></tr>
+</table>
+
+<h4>Candidate controllers: <code>/api/candidate</code> (Candidate)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/dashboard</td><td>Application numbers, latest jobs, upcoming interviews</td></tr>
+  <tr><td><span class="pill get">GET</span> <span class="pill put">PUT</span></td><td>/profile</td><td>View / update the profile</td></tr>
+  <tr><td><span class="pill post">POST</span> <span class="pill get">GET</span> <span class="pill del">DELETE</span></td><td>/resume</td><td>Upload (PDF/DOC/DOCX, max 5 MB) / download / delete the resume</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/interviews?upcoming=</td><td>My interviews</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/jobs?search=&amp;location=&amp;experience=&amp;skills=&amp;page=</td><td>Search approved jobs (paged)</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/jobs/{id}</td><td>Job details (including whether I already applied)</td></tr>
+  <tr><td><span class="pill get">GET</span> <span class="pill post">POST</span></td><td>/applications</td><td>My applications / apply</td></tr>
+  <tr><td><span class="pill get">GET</span> <span class="pill put">PUT</span> <span class="pill del">DELETE</span></td><td>/applications/{id}</td><td>View / edit cover letter / withdraw (only while Applied)</td></tr>
+</table>
+
+<h4>AdminController: <code>/api/admin</code> (Admin)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/dashboard</td><td>Numbers for users, jobs, applications</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/users · /employers · /candidates</td><td>Lists (with search)</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/jobs · /jobs/pending · /jobs/{id}</td><td>View jobs</td></tr>
+  <tr><td><span class="pill patch">PATCH</span></td><td>/jobs/{id}/approve · /jobs/{id}/reject</td><td>Approve a job / reject it with a reason</td></tr>
+</table>
+
+<h4>AiController: <code>/api/ai</code> (Candidate, 10 requests/min)</h4>
+<table>
+  <tr><th>Method</th><th>URL</th><th>Purpose</th></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/analyze-resume</td><td>Analyze a PDF (or the saved PDF resume) with AI and save the result</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/resume-analysis</td><td>The latest saved analysis</td></tr>
+  <tr><td><span class="pill post">POST</span></td><td>/skill-match</td><td><code>{ "jobId": 5 }</code> → match %, matched/missing skills</td></tr>
+  <tr><td><span class="pill get">GET</span></td><td>/job-matches?count=5</td><td>AI recommended jobs</td></tr>
+</table>
+<p><b>DashboardController</b> (<code>/api/dashboard/admin|employer|candidate</code>): an early test controller that only returns a welcome message, used to test role checks.</p>
+
+<h3 class="break">2.7 Services: business logic (folder <code>Services/</code>)</h3>
+<p>Each service has an <b>interface</b> (<code>IAuthService</code>) and a <b>class</b> (<code>AuthService</code>). Controllers depend on the interface, which makes the code easier to test and change. Every query is filtered by the logged-in user's id, so nobody can see someone else's data (asking for it returns 404).</p>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">AuthService</td><td>Register: lowercases and checks the email (duplicate → 409), hashes the password with BCrypt, creates an empty Employer/Candidate profile based on the role. Login: verifies the password, returns "Invalid email or password" on failure. Both return a token.</td></tr>
+  <tr><td class="file">TokenService</td><td>Creates the JWT: claims (userId, email, name, role), HMAC-SHA256 signature, 60-minute expiry.</td></tr>
+  <tr><td class="file">JwtSettings, AppClaimTypes</td><td>JWT settings class, and the claim names ("userId", "role", ...).</td></tr>
+  <tr><td class="file">ClaimsPrincipalExtensions</td><td><code>User.GetUserId()</code>: reads the user id from the token.</td></tr>
+  <tr><td class="file">ProfileLookup</td><td><code>db.GetCandidateIdAsync(userId)</code> / <code>GetEmployerIdAsync</code>: user id → profile id.</td></tr>
+  <tr><td class="file">EmployerService</td><td>Get/update the company profile, employer dashboard.</td></tr>
+  <tr><td class="file">EmployerJobService</td><td>Create a job (Pending), update it (editing an approved/rejected job sends it back to Pending; closed jobs can't be edited), close it.</td></tr>
+  <tr><td class="file">AdminService</td><td>Dashboard counts, lists of users/employers/candidates, approve and reject jobs (only Pending jobs; reject needs a reason).</td></tr>
+  <tr><td class="file">CandidateService</td><td>Get/update the profile (normalizes skills), upload/download/delete the resume, candidate dashboard.</td></tr>
+  <tr><td class="file">CandidateJobService</td><td>Searches approved jobs: text, location, experience, all skills must match, paging. Job details include "already applied" info.</td></tr>
+  <tr><td class="file">CandidateApplicationService</td><td>Apply (job must be approved, not applied before, resume uploaded), list own applications, edit cover letter and withdraw (only while Applied), own interviews.</td></tr>
+  <tr><td class="file">EmployerApplicationService</td><td>Application list/details, resume, shortlist/reject/select, schedule interviews (future date, valid status) and update their status. Sends emails through <code>IInterviewNotifier</code> after scheduling/cancelling.</td></tr>
+  <tr><td class="file">PasswordResetService</td><td>OTP: random 6-digit code, SHA-256 hash stored, 10-minute expiry, locked after 5 wrong attempts, 60s resend cooldown. Every response is generic so nobody can find out whether an email is registered. Not available for admins.</td></tr>
+  <tr><td class="file">PasswordResetOptions</td><td>Settings class for the limits above.</td></tr>
+  <tr><td class="file">ResumeStorage</td><td>Saves resumes in a private folder (not wwwroot). Checks size (up to 5 MB), extension, and the first bytes of the file (so an .exe can't be renamed to .pdf). Saves under a random name.</td></tr>
+  <tr><td class="file">JobQueries, ApplicationQueries</td><td>Reusable queries: stats, Job → JobDto, grouping interviews by application.</td></tr>
+  <tr><td class="file">SkillList</td><td>Turns text like "c#,  React , react" into a clean list (removing duplicates).</td></tr>
+</table>
+
+<h3>2.8 Email services (folder <code>Services/Email/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">IEmailSender</td><td>Interface: <code>SendAsync(to, subject, body)</code>.</td></tr>
+  <tr><td class="file">SmtpEmailSender</td><td>Sends real email over SMTP (e.g. Gmail with an app password).</td></tr>
+  <tr><td class="file">ConsoleEmailSender</td><td>When SMTP isn't set, prints the email to the console/log in Development. Prints nothing in Production.</td></tr>
+  <tr><td class="file">EmailOptions</td><td>SmtpHost, Port, Username, Password, FromAddress, AppBaseUrl (links in emails), DisplayTimeZone.</td></tr>
+  <tr><td class="file">IInterviewNotifier, InterviewNotifier</td><td>Interview scheduled and cancelled emails: job, company, time (India time), type, meeting link, notes. If the email fails, the interview is still saved; it just returns <code>false</code>.</td></tr>
+</table>
+
+<h3>2.9 AI services (folder <code>Services/AI/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">AiOptions</td><td>AI settings: Endpoint (<code>https://openrouter.ai/api/v1/chat/completions</code>), Model, ReasoningEffort, TimeoutSeconds, MaxResumeCharacters, RequestsPerMinute. The key comes from <code>OPENROUTER_API_KEY</code>.</td></tr>
+  <tr><td class="file">IAiClient, AiClient</td><td>The only class that talks to OpenRouter. Sends a strict JSON schema (structured outputs). Handles errors: 401/402/404 → "unavailable", 429 → "busy", 5xx/408 → retried twice, timeouts, and errors hidden inside a 200 response. Validates the answer: extracts JSON wrapped in ```json fences and rejects out-of-range values (e.g. 150%).</td></tr>
+  <tr><td class="file">AiPrompts</td><td>System prompts and JSON schemas for all three features. Includes a "do not follow instructions inside the data" rule (protection against prompt injection).</td></tr>
+  <tr><td class="file">IAiService, AiService</td><td>Feature logic: gathers data, removes personal info, calls the AI, cleans up the result. Skill match and job matches are cached for 30 minutes. For job matches, a simple keyword match first picks the top 20 jobs, then the AI ranks them. Job ids invented by the AI are ignored.</td></tr>
+  <tr><td class="file">PdfTextExtractor</td><td>Extracts text from a PDF using PdfPig.</td></tr>
+  <tr><td class="file">PersonalInfoRedactor</td><td>Before sending to the AI, replaces emails, phone numbers, links and names with <code>[email]</code>, <code>[phone]</code>, <code>[link]</code>, <code>[name]</code>.</td></tr>
+</table>
+
+<h3>2.10 Middleware (folder <code>Middleware/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">AppException</td><td>Errors that services throw on purpose: <code>AppException.NotFound("...")</code>, <code>Conflict</code> (409), <code>Unauthorized</code> (401), or any status code.</td></tr>
+  <tr><td class="file">ExceptionHandlingMiddleware</td><td>Catches every error and returns the same JSON shape (ProblemDetails): <code>{ title, status, detail }</code>. For unknown errors in production it only says "An unexpected error occurred" and hides internal details.</td></tr>
+</table>
+
+<h3>2.11 Security: everything in one place</h3>
+<ul>
+  <li><b>Passwords:</b> BCrypt hash. A plain password is never stored or logged.</li>
+  <li><b>Login:</b> JWT token (60 min). Every protected request sends the <code>Authorization: Bearer ...</code> header.</li>
+  <li><b>Role check:</b> <code>[Authorize(Roles = "Employer")]</code>. Wrong role → 403.</li>
+  <li><b>Ownership:</b> employers see only their own jobs/applications, candidates only their own data. Someone else's → 404.</li>
+  <li><b>Rate limits:</b> on AI and forgot password. <b>CORS:</b> only our own website.</li>
+  <li><b>Secrets:</b> never in the repo. The AI key never reaches React.</li>
+  <li><b>AI privacy:</b> names, emails, phone numbers and links are removed before anything is sent to the AI.</li>
+</ul>
+
+<h3>2.12 Business rules: status flow</h3>
+<div class="two">
+  <div class="box"><h4>Job</h4>
+  <pre>Pending  → Approved   (admin)
+Pending  → Rejected   (admin)
+Approved → Closed     (employer)
+Edit     → back to Pending</pre>
+  <p>Candidates can only see and apply to <b>Approved</b> jobs.</p></div>
+  <div class="box"><h4>Application</h4>
+  <pre>Applied
+  → Shortlisted
+  → InterviewScheduled
+  → Selected
+Any step → Rejected</pre>
+  <p>Cancelling an interview moves it back to Shortlisted. Withdraw/edit only while Applied.</p></div>
+</div>
+
+<!-- ============ 3. FRONTEND ============ -->
+<h2 class="break">3. Frontend (React)</h2>
+<p>Folder: <code>frontend/skillhire-client</code>. To run it: <code>npm install</code>, then <code>npm run dev</code> → <code>http://localhost:5173</code>.</p>
+
+<h3>3.1 Config files</h3>
+<table>
+  <tr><th>File</th><th>What it is</th></tr>
+  <tr><td class="file">package.json</td><td>Dependencies: react, react-dom, react-router-dom, axios. Dev: vite, typescript, tailwindcss, oxlint. Scripts: <code>dev</code>, <code>build</code> (tsc + vite), <code>lint</code>, <code>preview</code>.</td></tr>
+  <tr><td class="file">vite.config.ts</td><td>Vite settings: React plugin and Tailwind plugin.</td></tr>
+  <tr><td class="file">tsconfig*.json</td><td>TypeScript rules (strict mode).</td></tr>
+  <tr><td class="file">index.html</td><td>The single HTML page. React runs inside <code>&lt;div id="root"&gt;</code>. A small script applies the saved theme before the page loads, so there's no white flash.</td></tr>
+  <tr><td class="file">.env.example</td><td><code>VITE_API_URL=http://localhost:5052</code>: the backend address. The AI key never goes here.</td></tr>
+  <tr><td class="file">vercel.json</td><td>Serves <code>index.html</code> for every URL so refreshing a page doesn't give a 404.</td></tr>
+  <tr><td class="file">.oxlintrc.json</td><td>Lint (code quality) rules.</td></tr>
+  <tr><td class="file">src/index.css</td><td>Tailwind import, brand colours (navy, blue, cyan, violet), and the dark mode variant: <code>dark:</code> classes apply when <code>&lt;html&gt;</code> has the <code>dark</code> class.</td></tr>
+</table>
+
+<h3>3.2 main.tsx and App.tsx</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">main.tsx</td><td>The app's entry point. First <code>wakeServer()</code> wakes the backend, then <code>&lt;App /&gt;</code> is rendered into <code>#root</code>.</td></tr>
+  <tr><td class="file">App.tsx</td><td>Wraps everything: <code>ThemeProvider</code> → <code>BrowserRouter</code> → <code>AuthProvider</code> → <code>AppRoutes</code>, plus <code>ServerWakingBanner</code>.</td></tr>
+</table>
+
+<h3>3.3 Routes (folder <code>routes/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">AppRoutes.tsx</td><td>All URLs and their pages (list below).</td></tr>
+  <tr><td class="file">ProtectedRoute.tsx</td><td>Not logged in → <code>/login</code>. Wrong role → <code>/unauthorized</code>.</td></tr>
+  <tr><td class="file">PublicOnlyRoute.tsx</td><td>For login, register and forgot password: sends already logged-in users to their dashboard.</td></tr>
+  <tr><td class="file">rolePaths.ts</td><td>Each role's dashboard path (<code>/admin</code>, <code>/employer</code>, <code>/candidate</code>) and which role can open which path.</td></tr>
+</table>
+<table>
+  <tr><th>Area</th><th>URLs</th></tr>
+  <tr><td>Public</td><td>/login, /register, /forgot-password, /reset-password, /unauthorized, * (NotFound)</td></tr>
+  <tr><td>Admin</td><td>/admin, /admin/jobs, /admin/users</td></tr>
+  <tr><td>Employer</td><td>/employer, /employer/profile, /employer/jobs, /employer/jobs/new, /employer/jobs/:id/edit, /employer/applications, /employer/applications/:id, /employer/applications/:id/interview</td></tr>
+  <tr><td>Candidate</td><td>/candidate, /candidate/profile, /candidate/resume, /candidate/resume/analysis, /candidate/jobs, /candidate/jobs/:id, /candidate/applications, /candidate/interviews</td></tr>
+</table>
+
+<h3>3.4 Context: app-wide shared data (folder <code>context/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">AuthContext.ts, AuthProvider.tsx, useAuth.ts</td><td>The logged-in user, <code>login()</code>, <code>register()</code>, <code>logout()</code>. The session is kept in localStorage (<code>skillhire.session</code>), so you stay logged in after a refresh. Logs out automatically when the token expires or a 401 arrives. In any page: <code>const { user, logout } = useAuth()</code>.</td></tr>
+  <tr><td class="file">ThemeContext.ts, ThemeProvider.tsx, useTheme.ts</td><td>Dark/light theme. Adds the <code>dark</code> class to <code>&lt;html&gt;</code> and saves it in localStorage (<code>skillhire.theme</code>). Follows the OS setting the first time.</td></tr>
+</table>
+
+<h3>3.5 Services: API calls to the backend (folder <code>services/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">api.ts</td><td>A single axios instance. Adds the token to every request, tracks slow requests (for the banner), and fires a logout event on 401 (except for the login page's own 401).</td></tr>
+  <tr><td class="file">authService.ts</td><td>login, register, me, forgotPassword, verifyOtp, resetPassword.</td></tr>
+  <tr><td class="file">employerService.ts</td><td>Dashboard, profile, jobs (create/update/close), applications, shortlist/reject/select, interviews.</td></tr>
+  <tr><td class="file">candidateService.ts</td><td>Dashboard, profile, resume (with upload progress), job search, apply, applications, interviews.</td></tr>
+  <tr><td class="file">adminService.ts</td><td>Dashboard, users, employers, candidates, jobs, approve/reject.</td></tr>
+  <tr><td class="file">aiService.ts</td><td>analyzeResume, getLatestAnalysis, getSkillMatch, getJobMatches.</td></tr>
+  <tr><td class="file">fileService.ts</td><td>Downloads/previews protected files (resumes) with the token.</td></tr>
+  <tr><td class="file">errors.ts</td><td><code>parseApiError()</code>: turns the backend's error JSON into a simple message and field errors.</td></tr>
+  <tr><td class="file">tokenStorage.ts, themeStorage.ts</td><td>Save/load the session and theme in localStorage.</td></tr>
+  <tr><td class="file">serverStatus.ts</td><td>Tracks requests longer than 5 seconds (for the banner), and <code>wakeServer()</code>.</td></tr>
+</table>
+
+<h3>3.6 Hooks and 3.7 Types</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">hooks/useApi.ts</td><td>The standard way to load data: <code>const { data, error, isLoading, reload, setData } = useApi(() =&gt; service.get(), key)</code>. Every page loads its data with this.</td></tr>
+  <tr><td class="file">types/*.ts</td><td>TypeScript versions of the backend DTOs: <code>auth</code>, <code>job</code>, <code>application</code>, <code>interview</code>, <code>candidate</code>, <code>employer</code>, <code>admin</code>, <code>ai</code>, <code>api</code> (ProblemDetails, PagedResult). A wrong field name gives an error at compile time.</td></tr>
+</table>
+
+<h3>3.8 Utils (folder <code>utils/</code>)</h3>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">format.ts</td><td>formatSalary, formatExperience, formatDate, formatDateTime (local time), parseSkills, formatFileSize, emptyToNull.</td></tr>
+  <tr><td class="file">validation.ts</td><td>Form checks: emailError, passwordError, otpError, withoutEmpty.</td></tr>
+  <tr><td class="file">labels.ts</td><td>Friendly names for statuses and interview types ("InterviewScheduled" → "Interview scheduled").</td></tr>
+  <tr><td class="file">applications.ts</td><td><code>canScheduleInterview()</code>: the same rule as the backend, on the frontend.</td></tr>
+  <tr><td class="file">ai.ts</td><td>Colour based on match % (strong/good/low), PDF check (5 MB).</td></tr>
+</table>
+
+<h3 class="break">3.9 Components (folder <code>components/</code>)</h3>
+<p>Small reusable UI pieces. Build once, use on every page.</p>
+<table>
+  <tr><th>Component</th><th>Purpose</th></tr>
+  <tr><td class="file">AppLayout</td><td>Layout after login: top navbar (menu depends on role), theme toggle, logout, page in the middle.</td></tr>
+  <tr><td class="file">AuthLayout</td><td>Layout for login/register pages (form on the left, brand panel on the right).</td></tr>
+  <tr><td class="file">Button, SubmitButton</td><td>Buttons (primary, secondary, danger, success) with a loading spinner. <code>ButtonLink</code> = a link styled as a button.</td></tr>
+  <tr><td class="file">FormField, TextAreaField, SelectField, SearchInput</td><td>Form inputs with label, error message and hint.</td></tr>
+  <tr><td class="file">Alert</td><td>Error / success / info message box.</td></tr>
+  <tr><td class="file">LoadingState, ErrorState, EmptyState</td><td>Loading spinner, error with a retry button, "nothing found" box.</td></tr>
+  <tr><td class="file">Modal</td><td>Popup dialog (confirm, reject reason, interview outcome).</td></tr>
+  <tr><td class="file">PageHeader, StatCard, FilterTabs, Pagination</td><td>Page title, dashboard number cards, status tabs, page numbers.</td></tr>
+  <tr><td class="file">StatusBadge, SkillTags, CompanyLogo, Logo</td><td>Coloured status label, skill chips, company logo (initials if missing), app logo.</td></tr>
+  <tr><td class="file">ThemeToggle</td><td>Sun/moon button: dark/light.</td></tr>
+  <tr><td class="file">ResumePreviewModal</td><td>Shows a PDF resume inside the page; other formats are downloaded.</td></tr>
+  <tr><td class="file">ServerWakingBanner</td><td>Shows a "Waking up the server…" banner when a request takes longer than 5s.</td></tr>
+  <tr><td class="file">ai/AiLabel, MatchScore</td><td>"AI" marker, and the round ring showing match %.</td></tr>
+  <tr><td class="file">ai/ResumeAnalyzerCard</td><td>Card for analyzing the resume.</td></tr>
+  <tr><td class="file">ai/SkillMatchPanel</td><td>"How well do I match?" on the job page (AI is called only when the button is clicked).</td></tr>
+  <tr><td class="file">ai/RecommendedJobs</td><td>AI recommended jobs on the candidate dashboard (loads separately and doesn't block the page).</td></tr>
+  <tr><td class="file">applications/ApplicationProgress, ApplicationStatusBadge</td><td>Applied → Shortlisted → Interview → Selected tracker, status badge.</td></tr>
+  <tr><td class="file">interviews/InterviewCard</td><td>Interview card (candidates see job/company, employers see the candidate).</td></tr>
+  <tr><td class="file">jobs/JobForm, JobTable, JobListingCard, JobDetails</td><td>Job post/edit form, jobs table for employer/admin, job card in candidate search, job details.</td></tr>
+</table>
+
+<h3>3.10 Pages (folder <code>pages/</code>)</h3>
+<h4>Public pages</h4>
+<table>
+  <tr><th>Page</th><th>What it is</th></tr>
+  <tr><td class="file">Login.tsx</td><td>Email + password and a "Forgot password?" link. After login, goes to the role's dashboard.</td></tr>
+  <tr><td class="file">Register.tsx</td><td>Name, email, password, role (Employers also enter a company name).</td></tr>
+  <tr><td class="file">ForgotPassword.tsx</td><td>Enter your email → a code is sent.</td></tr>
+  <tr><td class="file">ResetPassword.tsx</td><td>Verify the code, then set a new password.</td></tr>
+  <tr><td class="file">Unauthorized.tsx, NotFound.tsx</td><td>Wrong role, unknown URL.</td></tr>
+</table>
+<h4>Admin pages</h4>
+<table>
+  <tr><th>Page</th><th>What it is</th></tr>
+  <tr><td class="file">AdminDashboard.tsx</td><td>Numbers and pending jobs.</td></tr>
+  <tr><td class="file">ManageJobs.tsx</td><td>All jobs, status tabs, approve / reject with a reason.</td></tr>
+  <tr><td class="file">ManageUsers.tsx</td><td>Lists of users, employers and candidates.</td></tr>
+</table>
+<h4>Employer pages</h4>
+<table>
+  <tr><th>Page</th><th>What it is</th></tr>
+  <tr><td class="file">EmployerDashboard.tsx</td><td>Job and application numbers, recent applications, upcoming interviews.</td></tr>
+  <tr><td class="file">CompanyProfile.tsx</td><td>Edit company details.</td></tr>
+  <tr><td class="file">MyJobs.tsx, PostJob.tsx, EditJob.tsx</td><td>Job list (with close button), new job, edit job (both use JobForm).</td></tr>
+  <tr><td class="file">Applications.tsx</td><td>Received applications: filter by job, status and search.</td></tr>
+  <tr><td class="file">CandidateDetails.tsx</td><td>One application: candidate profile, resume preview, shortlist/reject/select, interviews (complete/cancel).</td></tr>
+  <tr><td class="file">ScheduleInterview.tsx</td><td>Date and time, type, meeting link, notes. After saving, shows whether the candidate was emailed.</td></tr>
+</table>
+<h4>Candidate pages</h4>
+<table>
+  <tr><th>Page</th><th>What it is</th></tr>
+  <tr><td class="file">CandidateDashboard.tsx</td><td>Numbers, AI recommended jobs, latest jobs, upcoming interviews.</td></tr>
+  <tr><td class="file">CandidateProfile.tsx</td><td>Phone, location, skills, experience.</td></tr>
+  <tr><td class="file">ResumeUpload.tsx</td><td>Upload the resume (progress bar), preview, delete.</td></tr>
+  <tr><td class="file">ResumeAnalysis.tsx</td><td>AI resume analysis: summary, skills, technologies, experience, education, projects.</td></tr>
+  <tr><td class="file">JobList.tsx</td><td>Job search with filters and pagination.</td></tr>
+  <tr><td class="file">JobDetails.tsx</td><td>Job details, AI skill match panel, apply with a cover letter.</td></tr>
+  <tr><td class="file">MyApplications.tsx</td><td>My applications, progress tracker, edit cover letter, withdraw.</td></tr>
+  <tr><td class="file">MyInterviews.tsx</td><td>Upcoming and past interviews (feedback shown once completed).</td></tr>
+</table>
+
+<!-- ============ 4. SCRIPTS ============ -->
+<h2 class="break">4. Test scripts, Docker and deployment</h2>
+<table>
+  <tr><th>File</th><th>What it does</th></tr>
+  <tr><td class="file">scripts/api_smoke_test.py</td><td>All auth, employer and admin endpoints and role rules (83 checks).</td></tr>
+  <tr><td class="file">scripts/application_workflow_test.py</td><td>The full candidate flow: apply, applications, interviews (154 checks).</td></tr>
+  <tr><td class="file">scripts/ai_features_test.py</td><td>All three AI features against a mock server: privacy, errors, rate limit (151 checks).</td></tr>
+  <tr><td class="file">scripts/mock_openai.py</td><td>A fake OpenRouter server (port 5099). Tests AI with no key and no cost. Also simulates errors.</td></tr>
+  <tr><td class="file">scripts/password_reset_test.py</td><td>The full forgot-password flow (reads the code from the API log).</td></tr>
+  <tr><td class="file">scripts/interview_email_test.py</td><td>Interview scheduled/cancelled emails (42 checks).</td></tr>
+  <tr><td class="file">docker-compose.yml</td><td>Local SQL Server container (<code>skillhire-sqlserver</code>, port 1433). Start it with <code>docker compose up -d</code>.</td></tr>
+  <tr><td class="file">README.md</td><td>Setup, all endpoints, commands, configuration, deployment guide.</td></tr>
+</table>
+<pre>Running locally:
+  docker compose up -d                                      # SQL Server
+  cd backend/SkillHireAI.API && dotnet run --launch-profile http   # API :5052
+  cd frontend/skillhire-client && npm run dev               # React :5173
+
+Live:
+  Frontend → Vercel (deploys automatically on GitHub push, VITE_API_URL = Azure URL)
+  Backend  → Azure App Service (dotnet publish + az webapp deploy)
+  Database → Azure SQL (free serverless, pauses after 60 min idle)</pre>
+
+<!-- ============ 5. EXAMPLE ============ -->
+<h2>5. Full example: from posting a job to the interview email</h2>
+<table>
+  <tr><th>Step</th><th>Where</th><th>What happens</th></tr>
+  <tr><td>1</td><td>Employer · PostJob.tsx → POST /api/employer/jobs</td><td>EmployerJobService saves the job as <b>Pending</b>.</td></tr>
+  <tr><td>2</td><td>Admin · ManageJobs.tsx → PATCH /api/admin/jobs/{id}/approve</td><td>AdminService sets the status to <b>Approved</b>. Candidates can now see it.</td></tr>
+  <tr><td>3</td><td>Candidate · JobList.tsx → GET /api/candidate/jobs</td><td>CandidateJobService searches approved jobs only.</td></tr>
+  <tr><td>4</td><td>Candidate · JobDetails.tsx → POST /api/ai/skill-match</td><td>AiService sends the skills and the job to OpenRouter (no name/email) → match %.</td></tr>
+  <tr><td>5</td><td>Candidate · JobDetails.tsx → POST /api/candidate/applications</td><td>CandidateApplicationService checks the rules and creates the application as <b>Applied</b>.</td></tr>
+  <tr><td>6</td><td>Employer · CandidateDetails.tsx → PATCH .../shortlist</td><td>Status becomes <b>Shortlisted</b>.</td></tr>
+  <tr><td>7</td><td>Employer · ScheduleInterview.tsx → POST .../interviews</td><td>Interview saved, status <b>InterviewScheduled</b>, InterviewNotifier emails the candidate, <code>candidateNotified: true</code>.</td></tr>
+  <tr><td>8</td><td>Candidate · MyInterviews.tsx</td><td>The interview appears. Once completed, the employer's feedback shows too.</td></tr>
+  <tr><td>9</td><td>Employer · CandidateDetails.tsx → PATCH .../select</td><td>Status becomes <b>Selected</b>.</td></tr>
+</table>
+
+<!-- ============ 6. READING ORDER ============ -->
+<h2>6. Recommended order for reading the code</h2>
+<div class="two">
+  <div class="box"><h4>Backend</h4>
+  <ol>
+    <li><code>Program.cs</code>: understand the whole setup</li>
+    <li><code>Models/</code> + <code>Data/ApplicationDbContext.cs</code>: the tables</li>
+    <li><code>AuthController</code> → <code>AuthService</code> → <code>TokenService</code>: the full login flow</li>
+    <li><code>EmployerJobsController</code> → <code>EmployerJobService</code>: a simple CRUD</li>
+    <li><code>CandidateApplicationService</code> + <code>EmployerApplicationService</code>: the real business rules</li>
+    <li><code>Middleware/</code>: how errors are produced</li>
+    <li><code>Services/AI/</code> and <code>Services/Email/</code>: extra features</li>
+  </ol></div>
+  <div class="box"><h4>Frontend</h4>
+  <ol>
+    <li><code>main.tsx</code> → <code>App.tsx</code> → <code>routes/AppRoutes.tsx</code></li>
+    <li><code>services/api.ts</code> + <code>authService.ts</code></li>
+    <li><code>context/AuthProvider.tsx</code>: login state</li>
+    <li><code>pages/Login.tsx</code>: one page from start to finish</li>
+    <li><code>hooks/useApi.ts</code> + any dashboard page</li>
+    <li><code>components/</code>: Button, FormField, Alert</li>
+    <li><code>pages/candidate/JobDetails.tsx</code>: AI and apply together</li>
+  </ol></div>
+</div>
+<div class="note"><b>Tip:</b> Open Swagger (<code>http://localhost:5052/swagger</code>) and try each endpoint yourself. Then do the same thing from the React page and watch the request in the browser DevTools <b>Network</b> tab. You'll understand the code on both sides together.</div>
+
+</body>
+</html>
