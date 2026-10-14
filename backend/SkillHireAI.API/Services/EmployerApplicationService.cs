@@ -14,18 +14,6 @@ namespace SkillHireAI.API.Services;
 /// </summary>
 public class EmployerApplicationService : IEmployerApplicationService
 {
-    // Which statuses each action is allowed from. Selected and Rejected are final.
-    private static readonly ApplicationStatus[] CanShortlist = [ApplicationStatus.Applied];
-
-    private static readonly ApplicationStatus[] CanReject =
-        [ApplicationStatus.Applied, ApplicationStatus.Shortlisted, ApplicationStatus.InterviewScheduled];
-
-    private static readonly ApplicationStatus[] CanSelect =
-        [ApplicationStatus.Shortlisted, ApplicationStatus.InterviewScheduled];
-
-    private static readonly ApplicationStatus[] CanSchedule =
-        [ApplicationStatus.Applied, ApplicationStatus.Shortlisted, ApplicationStatus.InterviewScheduled];
-
     private readonly ApplicationDbContext _db;
     private readonly IResumeStorage _resumes;
     private readonly IInterviewNotifier _notifier;
@@ -79,15 +67,15 @@ public class EmployerApplicationService : IEmployerApplicationService
     }
 
     public Task<EmployerApplicationDetailsDto> ShortlistAsync(int userId, int applicationId) =>
-        ChangeStatusAsync(userId, applicationId, ApplicationStatus.Shortlisted, CanShortlist, "shortlist");
+        ChangeStatusAsync(userId, applicationId, ApplicationStatus.Shortlisted, ApplicationStatusRules.CanShortlist, "shortlist");
 
     public Task<EmployerApplicationDetailsDto> SelectAsync(int userId, int applicationId) =>
-        ChangeStatusAsync(userId, applicationId, ApplicationStatus.Selected, CanSelect, "select");
+        ChangeStatusAsync(userId, applicationId, ApplicationStatus.Selected, ApplicationStatusRules.CanSelect, "select");
 
     public async Task<EmployerApplicationDetailsDto> RejectAsync(int userId, int applicationId)
     {
         var application = await GetOwnApplicationAsync(userId, applicationId);
-        EnsureAllowed(application, CanReject, "reject");
+        EnsureAllowed(application, ApplicationStatusRules.CanReject, "reject");
 
         // A rejected candidate shouldn't still have interviews on their calendar.
         var scheduled = await _db.Interviews
@@ -105,7 +93,7 @@ public class EmployerApplicationService : IEmployerApplicationService
     public async Task<InterviewDto> ScheduleInterviewAsync(int userId, int applicationId, ScheduleInterviewDto request)
     {
         var application = await GetOwnApplicationAsync(userId, applicationId);
-        EnsureAllowed(application, CanSchedule, "schedule an interview for");
+        EnsureAllowed(application, ApplicationStatusRules.CanScheduleInterview, "schedule an interview for");
 
         if (await _db.Interviews.AnyAsync(i => i.ApplicationId == application.Id && i.Status == InterviewStatus.Scheduled))
         {
@@ -197,10 +185,10 @@ public class EmployerApplicationService : IEmployerApplicationService
     }
 
     private async Task<EmployerApplicationDetailsDto> ChangeStatusAsync(
-        int userId, int applicationId, ApplicationStatus target, ApplicationStatus[] allowedFrom, string action)
+        int userId, int applicationId, ApplicationStatus target, Func<ApplicationStatus, bool> isAllowed, string action)
     {
         var application = await GetOwnApplicationAsync(userId, applicationId);
-        EnsureAllowed(application, allowedFrom, action);
+        EnsureAllowed(application, isAllowed, action);
 
         application.Status = target;
         application.UpdatedAt = DateTime.UtcNow;
@@ -209,9 +197,9 @@ public class EmployerApplicationService : IEmployerApplicationService
         return await GetDetailsAsync(application.Job.EmployerId, application.Id);
     }
 
-    private static void EnsureAllowed(Application application, ApplicationStatus[] allowedFrom, string action)
+    private static void EnsureAllowed(Application application, Func<ApplicationStatus, bool> isAllowed, string action)
     {
-        if (!allowedFrom.Contains(application.Status))
+        if (!isAllowed(application.Status))
         {
             throw AppException.Conflict($"You cannot {action} an application that is {Describe(application.Status)}.");
         }

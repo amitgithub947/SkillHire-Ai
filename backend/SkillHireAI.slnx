@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SkillHireAI.API/SkillHireAI.API.csproj" />
+  <Project Path="SkillHireAI.Tests/SkillHireAI.Tests.csproj" />
+</Solution>

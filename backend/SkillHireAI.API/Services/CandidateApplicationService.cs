@@ -104,7 +104,7 @@ public class CandidateApplicationService : ICandidateApplicationService
     {
         var application = await GetOwnApplicationAsync(userId, applicationId);
 
-        if (application.Status != ApplicationStatus.Applied)
+        if (!ApplicationStatusRules.CanCandidateChange(application.Status))
         {
             throw AppException.Conflict("The cover letter can only be changed before the employer reviews your application.");
         }
@@ -120,7 +120,7 @@ public class CandidateApplicationService : ICandidateApplicationService
     {
         var application = await GetOwnApplicationAsync(userId, applicationId);
 
-        if (application.Status != ApplicationStatus.Applied)
+        if (!ApplicationStatusRules.CanCandidateChange(application.Status))
         {
             throw AppException.Conflict("Applications can only be withdrawn before the employer reviews them.");
         }
