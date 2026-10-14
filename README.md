@@ -124,7 +124,7 @@ app follows the operating system's setting.
 Admins cannot self-register. One is seeded from `appsettings.Development.json`:
 
 - Email: `admin@skillhire.ai`
-- Password: `Admin@2004`
+- Password: `Admin@12345`
 
 ## API endpoints
 
