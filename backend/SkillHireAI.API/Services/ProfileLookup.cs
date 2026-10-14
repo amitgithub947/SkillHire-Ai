@@ -24,6 +24,6 @@ public static class ProfileLookup
             .Select(e => (int?)e.Id)
             .SingleOrDefaultAsync();
 
-        return employerId ?? throw AppException.NotFound("Employer profile not found.");
+        return employerId ?? throw AppException.NotFound("Company profile not found.");
     }
 }

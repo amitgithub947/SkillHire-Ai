@@ -162,7 +162,7 @@ form = paths.get("/api/ai/analyze-resume", {}).get("post", {}).get("requestBody"
 check("analyze-resume takes multipart file", "multipart/form-data" in form)
 
 print("\nSetup: employer with jobs, admin approval")
-employer = register("Employer", f"ai.employer.{RUN}@example.com", "Ravi Menon", f"AI Test Labs {RUN}")
+employer = register("Recruiter", f"ai.employer.{RUN}@example.com", "Ravi Menon", f"AI Test Labs {RUN}")
 admin = expect("admin login", "POST", "/api/auth/login", 200, body=ADMIN)["token"]
 
 

@@ -105,7 +105,7 @@ function ProfileForm({ profile, onSaved }: { profile: EmployerProfile; onSaved: 
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
+        className="space-y-6 card p-6 sm:p-8 lg:col-span-2"
       >
         {saved && <Alert variant="success">Company profile saved.</Alert>}
         {serverError && <Alert variant="error">{serverError}</Alert>}
@@ -166,12 +166,12 @@ function ProfileForm({ profile, onSaved }: { profile: EmployerProfile; onSaved: 
         </div>
       </form>
 
-      <aside className="h-fit rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <aside className="h-fit card p-6">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Preview</p>
         <div className="mt-4 flex items-center gap-4">
           <CompanyLogo name={values.companyName || 'Company'} logoUrl={emptyToNull(values.logoUrl)} size="lg" />
           <div className="min-w-0">
-            <p className="truncate text-lg font-semibold text-brand-navy dark:text-slate-100">{values.companyName || 'Company name'}</p>
+            <p className="truncate section-title">{values.companyName || 'Company name'}</p>
             <p className="text-sm text-slate-500 dark:text-slate-400">{values.location || 'Location'}</p>
           </div>
         </div>

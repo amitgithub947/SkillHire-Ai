@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AppLayout } from '../components/AppLayout'
 import { useAuth } from '../context/useAuth'
 import AdminDashboard from '../pages/admin/AdminDashboard'
@@ -12,14 +12,14 @@ import MyApplications from '../pages/candidate/MyApplications'
 import MyInterviews from '../pages/candidate/MyInterviews'
 import ResumeAnalysis from '../pages/candidate/ResumeAnalysis'
 import ResumeUpload from '../pages/candidate/ResumeUpload'
-import Applications from '../pages/employer/Applications'
-import CandidateDetails from '../pages/employer/CandidateDetails'
-import CompanyProfile from '../pages/employer/CompanyProfile'
-import EditJob from '../pages/employer/EditJob'
-import EmployerDashboard from '../pages/employer/EmployerDashboard'
-import MyJobs from '../pages/employer/MyJobs'
-import PostJob from '../pages/employer/PostJob'
-import ScheduleInterview from '../pages/employer/ScheduleInterview'
+import Applications from '../pages/recruiter/Applications'
+import CandidateDetails from '../pages/recruiter/CandidateDetails'
+import CompanyProfile from '../pages/recruiter/CompanyProfile'
+import EditJob from '../pages/recruiter/EditJob'
+import RecruiterDashboard from '../pages/recruiter/RecruiterDashboard'
+import MyJobs from '../pages/recruiter/MyJobs'
+import PostJob from '../pages/recruiter/PostJob'
+import ScheduleInterview from '../pages/recruiter/ScheduleInterview'
 import ForgotPassword from '../pages/ForgotPassword'
 import Login from '../pages/Login'
 import NotFound from '../pages/NotFound'
@@ -33,6 +33,12 @@ import { dashboardPathFor } from './rolePaths'
 function HomeRedirect() {
   const { user } = useAuth()
   return <Navigate to={user ? dashboardPathFor(user.role) : '/login'} replace />
+}
+
+/** Old /employer/... links (bookmarks, emails) open the same page under /recruiter. */
+function LegacyEmployerRedirect() {
+  const { pathname, search } = useLocation()
+  return <Navigate to={pathname.replace(/^\/employer/, '/recruiter') + search} replace />
 }
 
 export function AppRoutes() {
@@ -56,15 +62,15 @@ export function AppRoutes() {
             <Route path="/admin/users" element={<ManageUsers />} />
           </Route>
 
-          <Route element={<ProtectedRoute allowedRoles={['Employer']} />}>
-            <Route path="/employer" element={<EmployerDashboard />} />
-            <Route path="/employer/profile" element={<CompanyProfile />} />
-            <Route path="/employer/jobs" element={<MyJobs />} />
-            <Route path="/employer/jobs/new" element={<PostJob />} />
-            <Route path="/employer/jobs/:id/edit" element={<EditJob />} />
-            <Route path="/employer/applications" element={<Applications />} />
-            <Route path="/employer/applications/:id" element={<CandidateDetails />} />
-            <Route path="/employer/applications/:id/interview" element={<ScheduleInterview />} />
+          <Route element={<ProtectedRoute allowedRoles={['Recruiter']} />}>
+            <Route path="/recruiter" element={<RecruiterDashboard />} />
+            <Route path="/recruiter/profile" element={<CompanyProfile />} />
+            <Route path="/recruiter/jobs" element={<MyJobs />} />
+            <Route path="/recruiter/jobs/new" element={<PostJob />} />
+            <Route path="/recruiter/jobs/:id/edit" element={<EditJob />} />
+            <Route path="/recruiter/applications" element={<Applications />} />
+            <Route path="/recruiter/applications/:id" element={<CandidateDetails />} />
+            <Route path="/recruiter/applications/:id/interview" element={<ScheduleInterview />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['Candidate']} />}>
@@ -80,6 +86,7 @@ export function AppRoutes() {
         </Route>
       </Route>
 
+      <Route path="/employer/*" element={<LegacyEmployerRedirect />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -53,7 +53,7 @@ public class InterviewNotifier : IInterviewNotifier
 
         if (!string.IsNullOrWhiteSpace(info.Notes))
         {
-            body.AppendLine().AppendLine("Notes from the employer:").AppendLine(info.Notes);
+            body.AppendLine().AppendLine("Notes from the recruiter:").AppendLine(info.Notes);
         }
 
         body.AppendLine()

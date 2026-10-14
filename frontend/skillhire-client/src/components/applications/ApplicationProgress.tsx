@@ -38,7 +38,7 @@ const DOT: Record<Step['state'], string> = {
 const LABEL: Record<Step['state'], string> = {
   done: 'text-slate-700 dark:text-slate-200',
   current: 'font-semibold text-brand-blue dark:text-blue-400',
-  upcoming: 'text-slate-400',
+  upcoming: 'text-slate-500 dark:text-slate-400',
   rejected: 'font-semibold text-red-600 dark:text-red-400',
 }
 

@@ -29,7 +29,7 @@ public class AdminService : IAdminService
             {
                 Total = roleCounts.Values.Sum(),
                 Admins = roleCounts.GetValueOrDefault(UserRole.Admin),
-                Employers = roleCounts.GetValueOrDefault(UserRole.Employer),
+                Recruiters = roleCounts.GetValueOrDefault(UserRole.Recruiter),
                 Candidates = roleCounts.GetValueOrDefault(UserRole.Candidate)
             },
             Jobs = await JobQueries.GetStatsAsync(_db.Jobs),

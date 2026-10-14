@@ -69,7 +69,7 @@ export default function CandidateDetails() {
   return (
     <>
       <Link
-        to={`/employer/applications?jobId=${data.jobId}`}
+        to={`/recruiter/applications?jobId=${data.jobId}`}
         className="mb-6 inline-block text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-blue-400"
       >
         ← Applications for {data.jobTitle}
@@ -77,7 +77,7 @@ export default function CandidateDetails() {
 
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy dark:text-slate-100 sm:text-3xl">{data.candidateName}</h1>
+          <h1 className="text-xl font-semibold text-brand-navy dark:text-slate-100 sm:text-2xl">{data.candidateName}</h1>
           <p className="mt-1.5 text-slate-500 dark:text-slate-400">
             Applied for <span className="font-medium text-slate-700 dark:text-slate-200">{data.jobTitle}</span> on{' '}
             {formatDateTime(data.appliedAt)}
@@ -93,11 +93,11 @@ export default function CandidateDetails() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Candidate profile</h2>
+          <section className="card p-6 sm:p-8">
+            <h2 className="section-title">Candidate profile</h2>
             <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
               <Fact label="Email">
-                <a href={`mailto:${data.candidateEmail}`} className="text-brand-blue dark:text-blue-400 hover:underline">
+                <a href={`mailto:${data.candidateEmail}`} className="link">
                   {data.candidateEmail}
                 </a>
               </Fact>
@@ -128,8 +128,8 @@ export default function CandidateDetails() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Cover letter</h2>
+          <section className="card p-6 sm:p-8">
+            <h2 className="section-title">Cover letter</h2>
             <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               {data.coverLetter ?? 'The candidate did not include a cover letter.'}
             </p>
@@ -137,15 +137,15 @@ export default function CandidateDetails() {
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Interviews</h2>
+              <h2 className="section-title">Interviews</h2>
               {canScheduleInterview(data) && (
-                <ButtonLink to={`/employer/applications/${data.id}/interview`} size="sm" variant="secondary">
+                <ButtonLink to={`/recruiter/applications/${data.id}/interview`} size="sm" variant="secondary">
                   Schedule interview
                 </ButtonLink>
               )}
             </div>
             {data.interviews.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+              <p className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                 No interviews yet.
               </p>
             ) : (
@@ -154,7 +154,7 @@ export default function CandidateDetails() {
                   <InterviewCard
                     key={interview.id}
                     interview={interview}
-                    perspective="employer"
+                    perspective="recruiter"
                     actions={
                       interview.status === 'Scheduled' && (
                         <>
@@ -183,7 +183,7 @@ export default function CandidateDetails() {
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-36 lg:self-start">
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="font-semibold text-brand-navy dark:text-slate-100">Hiring progress</h2>
             <div className="mt-5">
               <ApplicationProgress status={status} hadInterview={data.interviews.length > 0} />
@@ -201,7 +201,7 @@ export default function CandidateDetails() {
                   </Button>
                 )}
                 {canScheduleInterview(data) && (
-                  <ButtonLink to={`/employer/applications/${data.id}/interview`} variant="secondary">
+                  <ButtonLink to={`/recruiter/applications/${data.id}/interview`} variant="secondary">
                     Schedule interview
                   </ButtonLink>
                 )}
@@ -217,7 +217,7 @@ export default function CandidateDetails() {
             )}
           </section>
 
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="font-semibold text-brand-navy dark:text-slate-100">Resume</h2>
             {data.resumeFileName ? (
               <>
@@ -232,7 +232,7 @@ export default function CandidateDetails() {
             {data.resumeUrl && (
               <p className="mt-4 text-sm">
                 <span className="text-slate-500 dark:text-slate-400">Resume link: </span>
-                <a href={data.resumeUrl} target="_blank" rel="noreferrer" className="break-all font-medium text-brand-blue dark:text-blue-400 hover:underline">
+                <a href={data.resumeUrl} target="_blank" rel="noreferrer" className="break-all link">
                   {data.resumeUrl}
                 </a>
               </p>

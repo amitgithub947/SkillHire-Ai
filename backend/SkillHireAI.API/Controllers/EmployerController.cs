@@ -8,7 +8,8 @@ namespace SkillHireAI.API.Controllers;
 
 [ApiController]
 [Route("api/employer")]
-[Authorize(Roles = nameof(UserRole.Employer))]
+[Tags("Recruiter: profile")]
+[Authorize(Roles = nameof(UserRole.Recruiter))]
 [Produces("application/json")]
 public class EmployerController : ControllerBase
 {
@@ -19,7 +20,7 @@ public class EmployerController : ControllerBase
         _employerService = employerService;
     }
 
-    /// <summary>Job counts and recent jobs for the logged-in employer.</summary>
+    /// <summary>Job counts and recent jobs for the logged-in recruiter.</summary>
     [HttpGet("dashboard")]
     [ProducesResponseType(typeof(EmployerDashboardDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<EmployerDashboardDto>> GetDashboard()
@@ -27,7 +28,7 @@ public class EmployerController : ControllerBase
         return Ok(await _employerService.GetDashboardAsync(User.GetUserId()));
     }
 
-    /// <summary>Get the logged-in employer's company profile.</summary>
+    /// <summary>Get the logged-in recruiter's company profile.</summary>
     [HttpGet("profile")]
     [ProducesResponseType(typeof(EmployerProfileDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<EmployerProfileDto>> GetProfile()
@@ -35,7 +36,7 @@ public class EmployerController : ControllerBase
         return Ok(await _employerService.GetProfileAsync(User.GetUserId()));
     }
 
-    /// <summary>Update the logged-in employer's company profile.</summary>
+    /// <summary>Update the logged-in recruiter's company profile.</summary>
     [HttpPut("profile")]
     [ProducesResponseType(typeof(EmployerProfileDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]

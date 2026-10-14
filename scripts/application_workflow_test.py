@@ -132,8 +132,8 @@ for p in ["/api/candidate/profile", "/api/candidate/resume", "/api/candidate/das
     check(f"swagger documents {p}", p in paths)
 
 print("\nSetup: users and jobs")
-emp_a = register("Employer", f"emp.a.{RUN}@example.com", "Employer A", "Initech")
-emp_b = register("Employer", f"emp.b.{RUN}@example.com", "Employer B", "Umbrella")
+emp_a = register("Recruiter", f"emp.a.{RUN}@example.com", "Employer A", "Initech")
+emp_b = register("Recruiter", f"emp.b.{RUN}@example.com", "Employer B", "Umbrella")
 cand1 = register("Candidate", f"cand1.{RUN}@example.com", "Riya Verma")
 cand2 = register("Candidate", f"cand2.{RUN}@example.com", "Arjun Mehta")
 admin = expect("admin login", "POST", "/api/auth/login", 200, body=ADMIN)["token"]

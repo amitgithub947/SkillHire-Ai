@@ -7,10 +7,11 @@ using SkillHireAI.API.Services;
 
 namespace SkillHireAI.API.Controllers;
 
-/// <summary>Applications to the logged-in employer's jobs, and their interviews.</summary>
+/// <summary>Recruiter: applications to the logged-in recruiter's jobs, and their interviews.</summary>
 [ApiController]
 [Route("api/employer")]
-[Authorize(Roles = nameof(UserRole.Employer))]
+[Tags("Recruiter: applications and interviews")]
+[Authorize(Roles = nameof(UserRole.Recruiter))]
 [Produces("application/json")]
 public class EmployerApplicationsController : ControllerBase
 {

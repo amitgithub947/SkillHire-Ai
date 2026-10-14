@@ -15,7 +15,7 @@ export function JobListingCard({ job, mySkills }: JobListingCardProps) {
   return (
     <Link
       to={`/candidate/jobs/${job.id}`}
-      className="group block rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+      className="group block card p-5 transition-colors hover:border-blue-300 dark:hover:border-blue-500/40"
     >
       <div className="flex items-start gap-4">
         <CompanyLogo name={job.companyName} logoUrl={job.companyLogoUrl} />
@@ -49,7 +49,7 @@ export function JobListingCard({ job, mySkills }: JobListingCardProps) {
             </div>
           )}
 
-          <p className="mt-3 text-xs text-slate-400">Posted {formatDate(job.postedAt)}</p>
+          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">Posted {formatDate(job.postedAt)}</p>
         </div>
       </div>
     </Link>

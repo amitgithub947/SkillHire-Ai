@@ -18,9 +18,9 @@ public class DashboardController : ControllerBase
     [Authorize(Roles = nameof(UserRole.Admin))]
     public IActionResult Admin() => Ok(Welcome("Admin"));
 
-    [HttpGet("employer")]
-    [Authorize(Roles = nameof(UserRole.Employer))]
-    public IActionResult Employer() => Ok(Welcome("Employer"));
+    [HttpGet("recruiter")]
+    [Authorize(Roles = nameof(UserRole.Recruiter))]
+    public IActionResult Recruiter() => Ok(Welcome("Recruiter"));
 
     [HttpGet("candidate")]
     [Authorize(Roles = nameof(UserRole.Candidate))]

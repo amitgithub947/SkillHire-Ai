@@ -66,7 +66,7 @@ public class EmployerService : IEmployerService
 
     private async Task<Employer> GetEmployerAsync(int userId) =>
         await _db.Employers.Include(e => e.User).SingleOrDefaultAsync(e => e.UserId == userId)
-        ?? throw AppException.NotFound("Employer profile not found.");
+        ?? throw AppException.NotFound("Company profile not found.");
 
     private static EmployerProfileDto ToProfileDto(Employer employer) => new()
     {

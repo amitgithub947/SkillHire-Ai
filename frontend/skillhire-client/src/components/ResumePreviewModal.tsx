@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useApi } from '../hooks/useApi'
 import type { DownloadedFile } from '../services/fileService'
+import { buttonClasses } from './buttonClasses'
 import { ErrorState } from './ErrorState'
 import { LoadingState } from './LoadingState'
 import { Modal } from './Modal'
@@ -35,7 +36,7 @@ export function ResumePreviewModal({ title, load, onClose }: ResumePreviewModalP
           <a
             href={url}
             download={data.fileName}
-            className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            className={buttonClasses('secondary')}
           >
             Download {data.fileName}
           </a>

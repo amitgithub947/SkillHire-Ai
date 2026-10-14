@@ -107,7 +107,7 @@ public class EmployerJobService : IEmployerJobService
             .Select(e => (int?)e.Id)
             .SingleOrDefaultAsync();
 
-        return employerId ?? throw AppException.NotFound("Employer profile not found.");
+        return employerId ?? throw AppException.NotFound("Company profile not found.");
     }
 
     // Jobs owned by another employer return 404 rather than 403 so their

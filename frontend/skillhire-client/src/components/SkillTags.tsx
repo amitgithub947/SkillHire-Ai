@@ -18,10 +18,10 @@ export function SkillTags({ skills, highlight = [], max }: SkillTagsProps) {
       {shown.map((skill) => (
         <li
           key={skill}
-          className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+          className={`rounded px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${
             highlighted.has(skill.toLowerCase())
-              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-500/30'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
+              ? 'bg-emerald-50 text-emerald-800 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/25'
+              : 'bg-slate-50 text-slate-700 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700'
           }`}
         >
           {skill}

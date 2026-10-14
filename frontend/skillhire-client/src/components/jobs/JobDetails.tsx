@@ -10,7 +10,7 @@ export function JobDetails({ job }: { job: Job }) {
       <div className="flex items-center gap-4">
         <CompanyLogo name={job.companyName} logoUrl={job.companyLogoUrl} />
         <div>
-          <h3 className="text-lg font-semibold text-brand-navy dark:text-slate-100">{job.title}</h3>
+          <h3 className="section-title">{job.title}</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">{job.companyName}</p>
         </div>
         <div className="ml-auto">
@@ -18,7 +18,7 @@ export function JobDetails({ job }: { job: Job }) {
         </div>
       </div>
 
-      <dl className="grid grid-cols-2 gap-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-4 rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
         <Fact label="Location" value={job.location ?? '—'} />
         <Fact label="Salary" value={formatSalary(job.salaryMin, job.salaryMax)} />
         <Fact label="Experience" value={formatExperience(job.experienceRequired)} />

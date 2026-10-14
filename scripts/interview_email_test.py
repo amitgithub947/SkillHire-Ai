@@ -130,8 +130,8 @@ admin = expect("admin login", "POST", "/api/auth/login", 200, body=ADMIN)["token
 company = f"Mail Test Co {RUN}"
 emp_email = f"mail.emp.{RUN}@example.com"
 cand_email = f"mail.cand.{RUN}@example.com"
-emp = register("Employer", emp_email, "Mail Employer", company)
-other_emp = register("Employer", f"mail.other.{RUN}@example.com", "Other Employer", f"Other Co {RUN}")
+emp = register("Recruiter", emp_email, "Mail Employer", company)
+other_emp = register("Recruiter", f"mail.other.{RUN}@example.com", "Other Employer", f"Other Co {RUN}")
 cand = register("Candidate", cand_email, "Mail Candidate")
 job_title = f"Interview Mail Developer {RUN}"
 job = expect("post job", "POST", "/api/employer/jobs", 201, emp, {

@@ -44,7 +44,7 @@ public class UserStatsDto
 {
     public int Total { get; set; }
     public int Admins { get; set; }
-    public int Employers { get; set; }
+    public int Recruiters { get; set; }
     public int Candidates { get; set; }
 }
 
@@ -57,7 +57,7 @@ public class AdminDashboardDto
 
 public class RejectJobDto
 {
-    [Required(ErrorMessage = "Please give the employer a reason for the rejection.")]
+    [Required(ErrorMessage = "Please give the recruiter a reason for the rejection.")]
     [StringLength(500, MinimumLength = 5, ErrorMessage = "Reason must be between 5 and 500 characters.")]
     public string Reason { get; set; } = string.Empty;
 }

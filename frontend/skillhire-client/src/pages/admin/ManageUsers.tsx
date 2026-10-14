@@ -15,14 +15,14 @@ type Tab = 'users' | 'employers' | 'candidates'
 
 const TABS: FilterTab<Tab>[] = [
   { value: 'users', label: 'All users' },
-  { value: 'employers', label: 'Employers' },
+  { value: 'employers', label: 'Recruiters' },
   { value: 'candidates', label: 'Candidates' },
 ]
 
 const ROLE_BADGE: Record<AdminUser['role'], string> = {
-  Admin: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300',
-  Employer: 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300',
-  Candidate: 'bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300',
+  Admin: 'bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-500/30',
+  Recruiter: 'bg-blue-50 text-blue-700 ring-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/30',
+  Candidate: 'bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/30',
 }
 
 export default function ManageUsers() {
@@ -31,7 +31,7 @@ export default function ManageUsers() {
 
   return (
     <>
-      <PageHeader title="Manage users" subtitle="Everyone registered on SkillHire AI." />
+      <PageHeader eyebrow="Admin console" title="Manage users" subtitle="Everyone registered on SkillHire AI." />
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <FilterTabs tabs={TABS} value={tab} onChange={setTab} />
@@ -62,7 +62,7 @@ function UsersTable({ search }: { search: string }) {
             <Td strong>{u.name}</Td>
             <Td>{u.email}</Td>
             <Td>
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${ROLE_BADGE[u.role]}`}>{u.role}</span>
+              <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${ROLE_BADGE[u.role]}`}>{u.role}</span>
             </Td>
             <Td muted>{formatDate(u.createdAt)}</Td>
           </tr>
@@ -77,7 +77,7 @@ function EmployersTable({ search }: { search: string }) {
   const rows = (data ?? []).filter((e: AdminEmployer) => matches(search, e.companyName, e.contactName, e.email))
 
   return (
-    <ListState isLoading={isLoading} error={error} onRetry={reload} isEmpty={rows.length === 0} label="employers">
+    <ListState isLoading={isLoading} error={error} onRetry={reload} isEmpty={rows.length === 0} label="recruiters">
       <Table headers={['Company', 'Contact', 'Location', 'Website', 'Jobs', 'Joined']}>
         {rows.map((e) => (
           <tr key={e.employerId}>
@@ -94,7 +94,7 @@ function EmployersTable({ search }: { search: string }) {
             <Td>{e.location ?? '—'}</Td>
             <Td>
               {e.website ? (
-                <a href={e.website} target="_blank" rel="noreferrer" className="text-brand-blue dark:text-blue-400 hover:underline">
+                <a href={e.website} target="_blank" rel="noreferrer" className="link">
                   {e.website.replace(/^https?:\/\//, '')}
                 </a>
               ) : (
@@ -152,18 +152,18 @@ function ListState({ isLoading, error, onRetry, isEmpty, label, children }: List
 
 function Table({ headers, children }: { headers: string[]; children: ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-sm">
-        <thead className="bg-slate-50 dark:bg-slate-800/60 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+    <div className="card overflow-x-auto">
+      <table className="data-table">
+        <thead>
           <tr>
             {headers.map((h) => (
-              <th key={h} className="px-5 py-3">
+              <th key={h} scope="col">
                 {h}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">{children}</tbody>
+        <tbody>{children}</tbody>
       </table>
     </div>
   )
@@ -177,6 +177,6 @@ interface TdProps {
 }
 
 function Td({ children, strong, muted, wrap }: TdProps) {
-  const tone = strong ? 'font-semibold text-brand-navy dark:text-slate-100' : muted ? 'text-slate-500 dark:text-slate-400' : 'text-slate-700 dark:text-slate-200'
-  return <td className={`${wrap ? '' : 'whitespace-nowrap'} px-5 py-4 align-middle ${tone}`}>{children}</td>
+  const tone = strong ? 'font-medium text-brand-navy dark:text-slate-100' : muted ? 'text-slate-500 dark:text-slate-400' : 'text-slate-700 dark:text-slate-200'
+  return <td className={`${wrap ? '' : 'whitespace-nowrap'} align-middle ${tone}`}>{children}</td>
 }

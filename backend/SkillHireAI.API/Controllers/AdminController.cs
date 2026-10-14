@@ -36,7 +36,7 @@ public class AdminController : ControllerBase
         return Ok(await _adminService.GetUsersAsync(role, search));
     }
 
-    /// <summary>List employers with their company details.</summary>
+    /// <summary>List recruiters with their company details.</summary>
     [HttpGet("employers")]
     [ProducesResponseType(typeof(List<AdminEmployerDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<AdminEmployerDto>>> GetEmployers([FromQuery] string? search)
@@ -87,7 +87,7 @@ public class AdminController : ControllerBase
         return Ok(await _adminService.ApproveJobAsync(id));
     }
 
-    /// <summary>Reject a pending job with a reason the employer can see.</summary>
+    /// <summary>Reject a pending job with a reason the recruiter can see.</summary>
     [HttpPatch("jobs/{id:int}/reject")]
     [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]

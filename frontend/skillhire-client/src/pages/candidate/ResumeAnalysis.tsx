@@ -130,7 +130,7 @@ export default function ResumeAnalysis() {
         {message && <Alert variant="success">{message}</Alert>}
         {actionError && <Alert variant="error">{actionError}</Alert>}
 
-        <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <section className="card p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export default function ResumeAnalysis() {
             )}
           </div>
           <p className="mt-4 leading-relaxed text-slate-700 dark:text-slate-200">{data.summary || 'No summary was produced.'}</p>
-          <dl className="mt-5 grid grid-cols-2 gap-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
+          <dl className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
             <Fact label="Experience" value={data.totalExperienceYears != null ? `${data.totalExperienceYears} years` : '—'} />
             <Fact label="Technologies" value={String(data.technologies.length)} />
             <Fact label="Roles" value={String(data.experience.length)} />
@@ -165,7 +165,7 @@ export default function ResumeAnalysis() {
           </Card>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 px-5 py-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">
             {toAdd.length > 0
               ? `${toAdd.length} of these ${toAdd.length === 1 ? 'is' : 'are'} not on your profile yet. Green ones are already there.`
@@ -260,7 +260,7 @@ function profileInput(me: CandidateProfile, skills: string[]) {
 
 function Card({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+    <section className="card p-6">
       <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title}</h2>
       {children}
     </section>

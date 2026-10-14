@@ -70,7 +70,7 @@ export default function ScheduleInterview() {
   if (isLoading) return <LoadingState message="Loading application…" />
   if (error || !data) return <ErrorState message={error ?? 'Could not load this application.'} onRetry={reload} />
 
-  const backTo = `/employer/applications/${data.id}`
+  const backTo = `/recruiter/applications/${data.id}`
 
   if (!canScheduleInterview(data)) {
     return (
@@ -140,7 +140,7 @@ export default function ScheduleInterview() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
+          className="space-y-6 card p-6 sm:p-8 lg:col-span-2"
         >
           {serverError && <Alert variant="error">{serverError}</Alert>}
 
@@ -195,7 +195,7 @@ export default function ScheduleInterview() {
           </div>
         </form>
 
-        <aside className="h-fit rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <aside className="h-fit card p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Candidate</p>
           <p className="mt-3 font-semibold text-brand-navy dark:text-slate-100">{data.candidateName}</p>
           <p className="text-sm text-slate-500 dark:text-slate-400">{data.candidateEmail}</p>

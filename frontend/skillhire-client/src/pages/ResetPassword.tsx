@@ -154,7 +154,7 @@ export default function ResetPassword() {
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-          <Link to="/login" className="font-semibold text-brand-blue dark:text-blue-400 hover:underline">
+          <Link to="/login" className="link">
             Back to log in
           </Link>
         </p>
@@ -199,7 +199,7 @@ export default function ResetPassword() {
           type="button"
           onClick={resendCode}
           disabled={resendIn > 0}
-          className="font-semibold text-brand-blue dark:text-blue-400 hover:underline disabled:cursor-not-allowed disabled:text-slate-400 dark:disabled:text-slate-500 disabled:no-underline"
+          className="link disabled:cursor-not-allowed disabled:text-slate-400 dark:disabled:text-slate-500 disabled:no-underline"
         >
           {resendIn > 0 ? `Send a new code in ${resendIn}s` : 'Send a new code'}
         </button>

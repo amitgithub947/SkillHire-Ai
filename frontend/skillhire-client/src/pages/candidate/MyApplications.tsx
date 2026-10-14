@@ -23,11 +23,11 @@ import { APPLICATION_STATUS_LABELS } from '../../utils/labels'
 type Filter = 'All' | ApplicationStatus
 
 const STATUS_HELP: Record<ApplicationStatus, string> = {
-  Applied: 'The employer has not reviewed your application yet.',
-  Shortlisted: 'Good news: you are on the shortlist. The employer may contact you for an interview.',
+  Applied: 'The recruiter has not reviewed your application yet.',
+  Shortlisted: 'Good news: you are on the shortlist. The recruiter may contact you for an interview.',
   InterviewScheduled: 'You have an interview. Check the details below.',
-  Selected: 'Congratulations! The employer has selected you for this role.',
-  Rejected: 'The employer decided not to move forward this time. Keep applying!',
+  Selected: 'Congratulations! The recruiter has selected you for this role.',
+  Rejected: 'The recruiter decided not to move forward this time. Keep applying!',
 }
 
 export default function MyApplications() {
@@ -117,7 +117,7 @@ function ApplicationCard({ application, onView }: { application: CandidateApplic
   const next = application.interviews.find((i) => i.status === 'Scheduled')
 
   return (
-    <article className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6">
+    <article className="card p-5 sm:p-6">
       <div className="flex flex-wrap items-start gap-4">
         <CompanyLogo name={application.companyName} logoUrl={application.companyLogoUrl} />
         <div className="min-w-0 flex-1">
@@ -126,7 +126,7 @@ function ApplicationCard({ application, onView }: { application: CandidateApplic
             {application.companyName}
             {application.jobLocation && ` · ${application.jobLocation}`}
           </p>
-          <p className="mt-1 text-xs text-slate-400">Applied {formatDate(application.appliedAt)}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Applied {formatDate(application.appliedAt)}</p>
         </div>
         <div className="flex items-center gap-3">
           <ApplicationStatusBadge status={application.status} />
@@ -265,7 +265,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline"
+                className="text-sm link"
               >
                 Edit
               </button>
@@ -287,7 +287,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
           )}
           {!canChange && (
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              The employer has reviewed this application, so it can no longer be edited or withdrawn.
+              The recruiter has reviewed this application, so it can no longer be edited or withdrawn.
             </p>
           )}
         </div>
@@ -306,7 +306,7 @@ function ApplicationModal({ application, onClose, onUpdated, onWithdrawn }: Appl
         {application.jobStatus === 'Approved' && (
           <Link
             to={`/candidate/jobs/${application.jobId}`}
-            className="inline-block text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline"
+            className="inline-block text-sm link"
           >
             View job posting →
           </Link>

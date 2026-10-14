@@ -18,11 +18,11 @@ POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
-  "name": "Test Employer",
-  "email": "employer@example.com",
+  "name": "Test Recruiter",
+  "email": "recruiter@example.com",
   "password": "Password123",
   "confirmPassword": "Password123",
-  "role": "Employer",
+  "role": "Recruiter",
   "companyName": "Acme Corp"
 }
 

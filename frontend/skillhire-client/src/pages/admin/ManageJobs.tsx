@@ -92,7 +92,7 @@ export default function ManageJobs() {
     try {
       const updated = await adminService.rejectJob(rejecting.id, trimmed)
       replaceJob(updated)
-      setMessage(`Rejected "${updated.title}". The employer can see your reason.`)
+      setMessage(`Rejected "${updated.title}". The recruiter can see your reason.`)
       setRejecting(null)
     } catch (err) {
       const apiError = parseApiError(err)

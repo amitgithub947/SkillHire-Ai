@@ -6,10 +6,11 @@ using SkillHireAI.API.Services;
 
 namespace SkillHireAI.API.Controllers;
 
-/// <summary>An employer's own jobs. Employers can never change a job's approval status.</summary>
+/// <summary>Recruiter: their own jobs. Recruiters can never change a job's approval status.</summary>
 [ApiController]
 [Route("api/employer/jobs")]
-[Authorize(Roles = nameof(UserRole.Employer))]
+[Tags("Recruiter: jobs")]
+[Authorize(Roles = nameof(UserRole.Recruiter))]
 [Produces("application/json")]
 public class EmployerJobsController : ControllerBase
 {

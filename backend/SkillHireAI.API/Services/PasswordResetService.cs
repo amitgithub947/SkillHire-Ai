@@ -15,7 +15,7 @@ public class PasswordResetService : IPasswordResetService
     // Same answer whether or not the email has an account, so nobody can use this
     // page to find out which emails are registered.
     private const string CodeSentMessage =
-        "If an employer or candidate account exists for this email, we have sent a 6-digit code to it.";
+        "If a recruiter or candidate account exists for this email, we have sent a 6-digit code to it.";
 
     private const string InvalidCodeMessage =
         "This code is invalid or has expired. Check the latest email, or request a new code.";
@@ -176,7 +176,7 @@ public class PasswordResetService : IPasswordResetService
     {
         var normalized = AuthService.NormalizeEmail(email);
         return await _db.Users.SingleOrDefaultAsync(
-            u => u.Email == normalized && (u.Role == UserRole.Employer || u.Role == UserRole.Candidate),
+            u => u.Email == normalized && (u.Role == UserRole.Recruiter || u.Role == UserRole.Candidate),
             cancellationToken);
     }
 

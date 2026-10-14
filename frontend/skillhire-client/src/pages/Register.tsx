@@ -14,7 +14,7 @@ type RegisterErrors = Partial<Record<keyof RegisterForm, string>>
 
 const ROLE_OPTIONS: { value: RegisterRole; description: string }[] = [
   { value: 'Candidate', description: 'Find jobs and track applications' },
-  { value: 'Employer', description: 'Post jobs and review candidates' },
+  { value: 'Recruiter', description: 'Post jobs and review candidates' },
 ]
 
 // Mirrors the API rules so users see problems before submitting.
@@ -30,8 +30,8 @@ function validate(form: RegisterForm): RegisterErrors {
 
   if (form.confirmPassword !== form.password) errors.confirmPassword = 'Passwords do not match.'
 
-  if (form.role === 'Employer' && !form.companyName.trim())
-    errors.companyName = 'Company name is required for employers.'
+  if (form.role === 'Recruiter' && !form.companyName.trim())
+    errors.companyName = 'Company name is required for recruiters.'
 
   return withoutEmpty(errors)
 }
@@ -77,7 +77,7 @@ export default function Register() {
         password: form.password,
         confirmPassword: form.confirmPassword,
         role: form.role,
-        companyName: form.role === 'Employer' ? form.companyName.trim() : undefined,
+        companyName: form.role === 'Recruiter' ? form.companyName.trim() : undefined,
       })
     } catch (err) {
       const apiError = parseApiError(err)
@@ -103,9 +103,9 @@ export default function Register() {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => selectRole(option.value)}
-                  className={`rounded-lg border-2 p-3 text-left transition ${
+                  className={`rounded-md border p-3 text-left transition-colors ${
                     selected
-                      ? 'border-brand-blue bg-blue-50 dark:bg-blue-500/10'
+                      ? 'border-brand-blue bg-blue-50 ring-1 ring-brand-blue dark:border-blue-400 dark:bg-blue-500/10 dark:ring-blue-400'
                       : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
@@ -127,7 +127,7 @@ export default function Register() {
           error={errors.name}
         />
 
-        {form.role === 'Employer' && (
+        {form.role === 'Recruiter' && (
           <FormField
             label="Company name"
             name="companyName"
@@ -180,7 +180,7 @@ export default function Register() {
 
       <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-brand-blue dark:text-blue-400 hover:underline">
+        <Link to="/login" className="link">
           Log in
         </Link>
       </p>

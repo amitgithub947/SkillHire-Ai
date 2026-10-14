@@ -1,19 +1,19 @@
 # SkillHire AI
 
-A role-based job recruitment platform. Employers post jobs, candidates search and apply,
+A role-based job recruitment platform. Recruiters post jobs, candidates search and apply,
 and admins run the platform. AI (through OpenRouter) helps candidates with resume analysis,
 skill-match percentages and job recommendations.
 
 **Current status: Day 5 — forgot password (email code) and dark/light theme.**
 
 - Day 1: foundation and authentication.
-- Day 2: employer company profile, employer job posting (create, edit, close),
-  admin review of jobs (approve / reject), admin views of users, employers and candidates.
+- Day 2: recruiter company profile, recruiter job posting (create, edit, close),
+  admin review of jobs (approve / reject), admin views of users, recruiters and candidates.
 - Day 3: candidate profile and resume upload, job search with filters, applying to jobs,
-  tracking applications, employer review (shortlist, reject, select) and interview scheduling.
+  tracking applications, recruiter review (shortlist, reject, select) and interview scheduling.
 - Day 4: AI resume analyzer (PDF → structured skills, experience, education, projects),
   AI skill match on job details, and AI job recommendations on the candidate dashboard.
-- Day 5: forgot password for employers and candidates (6-digit email code), and a
+- Day 5: forgot password for recruiters and candidates (6-digit email code), and a
   dark/light theme toggle that is remembered across visits.
 
 ## Tech stack
@@ -24,7 +24,7 @@ skill-match percentages and job recommendations.
 | Backend        | ASP.NET Core Web API (.NET 10), C#                      |
 | ORM / Database | Entity Framework Core 10, Microsoft SQL Server 2022     |
 | Auth           | JWT bearer tokens, BCrypt password hashing              |
-| Authorization  | Roles: `Admin`, `Employer`, `Candidate`                 |
+| Authorization  | Roles: `Admin`, `Recruiter`, `Candidate`                |
 | API docs       | Swagger UI                                              |
 | AI             | OpenRouter (OpenAI-compatible Chat Completions) with structured outputs, PdfPig for PDF text |
 
@@ -57,8 +57,8 @@ SkillHireAI/
 │       └── src/
 │           ├── components/  App layout, buttons, tables, modals, form fields, jobs/
 │           ├── pages/       Login, Register, ForgotPassword, ResetPassword, admin/,
-│           │                employer/, candidate/
-│           ├── services/    Axios client, auth / employer / admin APIs, token and theme storage
+│           │                recruiter/, candidate/
+│           ├── services/    Axios client, auth / recruiter (employerService) / admin APIs, token and theme storage
 │           ├── hooks/       useApi (loading + error state for API calls)
 │           ├── context/     AuthContext + useAuth, ThemeContext + useTheme
 │           ├── routes/      Protected and role-based routes
@@ -117,7 +117,7 @@ npm run dev
 
 Open http://localhost:5173.
 
-The sun/moon button (top right on the login pages, in the header once logged in) switches
+The sun/moon button (top right on the login pages, next to your name in the sidebar once logged in) switches
 between light and dark mode. The choice is saved in `localStorage`; on a first visit the
 app follows the operating system's setting.
 
@@ -141,7 +141,7 @@ Admins cannot self-register. One is seeded from `appsettings.Development.json`:
 | POST   | `/api/auth/verify-otp`     | Public (Day 5) |
 | POST   | `/api/auth/reset-password` | Public (Day 5) |
 | GET    | `/api/dashboard/admin`     | Admin       |
-| GET    | `/api/dashboard/employer`  | Employer    |
+| GET    | `/api/dashboard/recruiter` | Recruiter   |
 | GET    | `/api/dashboard/candidate` | Candidate   |
 
 How forgot password works (Day 5):
@@ -159,7 +159,15 @@ returned by the API. A new code can be requested once a minute, and each endpoin
 allows 10 requests per minute per IP address. Settings are in the `PasswordReset`
 section of `appsettings.json`. Existing logins (JWTs) are not affected.
 
-### Employer (Day 2, Employer role only)
+### Recruiter (Day 2, Recruiter role only)
+
+The role used to be called `Employer`. Only the role name changed: the URLs below still
+start with `/api/employer`, and the company profile is still the `Employer` entity and
+table. The `RenameEmployerRoleToRecruiter` migration changes `Users.Role` from `Employer`
+to `Recruiter`, so existing accounts keep their jobs and applicants. Registering with
+`"role": "Employer"` still works and creates a recruiter. Tokens issued before the
+migration carry the old role, so those users need to log in again. In the React app the
+recruiter pages live under `/recruiter`, and old `/employer/...` links redirect there.
 
 | Method | Endpoint                          | Description |
 | ------ | --------------------------------- | ----------- |
@@ -178,7 +186,7 @@ section of `appsettings.json`. Existing logins (JWTs) are not affected.
 | ------ | --------------------------------- | ----------- |
 | GET    | `/api/admin/dashboard`            | User and job counts, oldest pending jobs |
 | GET    | `/api/admin/users?role=&search=`  | All users |
-| GET    | `/api/admin/employers?search=`    | Employers with job counts |
+| GET    | `/api/admin/employers?search=`    | Recruiter companies with job counts |
 | GET    | `/api/admin/candidates?search=`   | Candidates |
 | GET    | `/api/admin/jobs?status=&search=` | All jobs |
 | GET    | `/api/admin/jobs/pending`         | Jobs waiting for review |
@@ -186,7 +194,7 @@ section of `appsettings.json`. Existing logins (JWTs) are not affected.
 | PATCH  | `/api/admin/jobs/{id}/approve`    | Approve a pending job |
 | PATCH  | `/api/admin/jobs/{id}/reject`     | Reject a pending job, body: `{ "reason": "..." }` |
 
-Job status rules: employers never set status themselves, only `Pending` jobs can be
+Job status rules: recruiters never set status themselves, only `Pending` jobs can be
 approved or rejected, and closed jobs cannot be edited or reopened.
 
 ### Candidate (Day 3, Candidate role only)
@@ -208,7 +216,7 @@ approved or rejected, and closed jobs cannot be edited or reopened.
 | PUT    | `/api/candidate/applications/{id}`         | Edit cover letter (only while `Applied`) |
 | DELETE | `/api/candidate/applications/{id}`         | Withdraw (only while `Applied`) |
 
-### Employer applications and interviews (Day 3, Employer role only)
+### Recruiter applications and interviews (Day 3, Recruiter role only)
 
 | Method | Endpoint                                         | Description |
 | ------ | ------------------------------------------------ | ----------- |
@@ -227,10 +235,10 @@ needs a resume (uploaded file or link). Statuses move
 `Applied → Shortlisted → InterviewScheduled → Selected`, and `Rejected` is possible until
 the candidate is selected. Anything owned by another user returns `404`.
 
-Interview emails: when an employer schedules an interview, the candidate gets an email
+Interview emails: when a recruiter schedules an interview, the candidate gets an email
 with the job, company, date and time, type, meeting link and notes. Cancelling an
 interview sends a cancellation email. The schedule and cancel responses include
-`candidateNotified` (`true`/`false`) so the employer sees whether the email went out.
+`candidateNotified` (`true`/`false`) so the recruiter sees whether the email went out.
 A failed email never undoes the interview. Completing an interview and rejecting an
 application send no email.
 
@@ -273,7 +281,7 @@ Testing the AI endpoints in Swagger (http://localhost:5052/swagger):
    with `{ "jobId": <id> }`.
 5. **AI Job Recommendations:** `GET /api/ai/job-matches?count=5`.
 
-There must be at least one approved job (an employer posts it and the admin approves it).
+There must be at least one approved job (a recruiter posts it and the admin approves it).
 
 ### Unit tests (xUnit)
 
@@ -304,9 +312,14 @@ With the API running, these register test users and check every endpoint,
 including role and ownership rules:
 
 ```bash
-python3 scripts/api_smoke_test.py            # auth, employer and admin
+python3 scripts/api_smoke_test.py            # auth, recruiter and admin
 python3 scripts/application_workflow_test.py # candidates, applications, interviews
 ```
+
+To click through the app with realistic data, `python3 scripts/demo_data.py` creates a
+recruiter with three jobs (one left pending for the admin), three candidates who applied,
+one shortlisted candidate with an interview and one rejected candidate. It prints the
+logins; every demo account uses the password `Password123`.
 
 The AI test runs against a local mock AI server, so it needs no key and costs nothing:
 

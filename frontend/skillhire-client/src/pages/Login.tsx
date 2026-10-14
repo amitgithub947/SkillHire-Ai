@@ -80,7 +80,7 @@ export default function Login() {
           onChange={handleChange}
           error={errors.password}
           labelAction={
-            <Link to="/forgot-password" className="text-sm font-medium text-brand-blue dark:text-blue-400 hover:underline">
+            <Link to="/forgot-password" className="text-sm link">
               Forgot password?
             </Link>
           }
@@ -93,7 +93,7 @@ export default function Login() {
 
       <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         New to SkillHire AI?{' '}
-        <Link to="/register" className="font-semibold text-brand-blue dark:text-blue-400 hover:underline">
+        <Link to="/register" className="link">
           Create an account
         </Link>
       </p>

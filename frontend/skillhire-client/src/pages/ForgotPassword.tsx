@@ -66,13 +66,13 @@ export default function ForgotPassword() {
         </SubmitButton>
 
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          Password reset is available for employer and candidate accounts.
+          Password reset is available for recruiter and candidate accounts.
         </p>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         Remembered it?{' '}
-        <Link to="/login" className="font-semibold text-brand-blue dark:text-blue-400 hover:underline">
+        <Link to="/login" className="link">
           Back to log in
         </Link>
       </p>

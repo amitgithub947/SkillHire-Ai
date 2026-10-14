@@ -9,7 +9,7 @@ export default function PostJob() {
 
   const handleSubmit = async (input: JobInput) => {
     const job = await employerService.createJob(input)
-    navigate('/employer/jobs', {
+    navigate('/recruiter/jobs', {
       state: { message: `"${job.title}" was submitted and is waiting for admin approval.` },
     })
   }
@@ -20,7 +20,7 @@ export default function PostJob() {
         title="Post a job"
         subtitle="New jobs are reviewed by an admin before candidates can see them."
       />
-      <JobForm submitLabel="Submit for review" onSubmit={handleSubmit} onCancel={() => navigate('/employer/jobs')} />
+      <JobForm submitLabel="Submit for review" onSubmit={handleSubmit} onCancel={() => navigate('/recruiter/jobs')} />
     </div>
   )
 }

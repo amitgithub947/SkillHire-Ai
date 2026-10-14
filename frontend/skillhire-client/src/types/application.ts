@@ -29,7 +29,7 @@ export interface CandidateApplication {
   interviews: Interview[]
 }
 
-/** One row in the employer's applications list. */
+/** One row in the recruiter's applicants list. */
 export interface EmployerApplication {
   id: number
   jobId: number

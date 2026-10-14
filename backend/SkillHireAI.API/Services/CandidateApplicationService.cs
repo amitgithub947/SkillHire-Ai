@@ -106,7 +106,7 @@ public class CandidateApplicationService : ICandidateApplicationService
 
         if (!ApplicationStatusRules.CanCandidateChange(application.Status))
         {
-            throw AppException.Conflict("The cover letter can only be changed before the employer reviews your application.");
+            throw AppException.Conflict("The cover letter can only be changed before the recruiter reviews your application.");
         }
 
         application.CoverLetter = Clean(request.CoverLetter);
@@ -122,7 +122,7 @@ public class CandidateApplicationService : ICandidateApplicationService
 
         if (!ApplicationStatusRules.CanCandidateChange(application.Status))
         {
-            throw AppException.Conflict("Applications can only be withdrawn before the employer reviews them.");
+            throw AppException.Conflict("Applications can only be withdrawn before the recruiter reviews them.");
         }
 
         _db.Applications.Remove(application);

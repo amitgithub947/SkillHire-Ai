@@ -22,7 +22,7 @@ public class AuthController : ControllerBase
         _passwordResetService = passwordResetService;
     }
 
-    /// <summary>Create an Employer or Candidate account and return a JWT.</summary>
+    /// <summary>Create a Recruiter or Candidate account and return a JWT.</summary>
     [HttpPost("register")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
@@ -56,7 +56,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Email a 6-digit reset code to an Employer or Candidate account. Always returns the same
+    /// Email a 6-digit reset code to a Recruiter or Candidate account. Always returns the same
     /// message, whether or not the account exists. Admin accounts never get a code.
     /// </summary>
     [HttpPost("forgot-password")]

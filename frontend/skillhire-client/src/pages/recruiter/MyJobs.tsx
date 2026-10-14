@@ -64,7 +64,7 @@ export default function MyJobs() {
       <PageHeader
         title="My jobs"
         subtitle="Create, edit and close your job posts."
-        actions={<ButtonLink to="/employer/jobs/new">Post a job</ButtonLink>}
+        actions={<ButtonLink to="/recruiter/jobs/new">Post a job</ButtonLink>}
       />
 
       {message && (
@@ -87,7 +87,7 @@ export default function MyJobs() {
             <EmptyState
               title={filter === 'All' ? 'You have not posted any jobs yet' : `No ${filter.toLowerCase()} jobs`}
               message={filter === 'All' ? 'Post a job and an admin will review it.' : undefined}
-              action={filter === 'All' ? <ButtonLink to="/employer/jobs/new">Post a job</ButtonLink> : undefined}
+              action={filter === 'All' ? <ButtonLink to="/recruiter/jobs/new">Post a job</ButtonLink> : undefined}
             />
           ) : (
             <JobTable
@@ -96,10 +96,10 @@ export default function MyJobs() {
               onTitleClick={setViewing}
               renderActions={(job) =>
                 job.status === 'Closed' ? (
-                  <span className="py-1.5 text-xs text-slate-400">No actions</span>
+                  <span className="py-1.5 text-xs text-slate-500 dark:text-slate-400">No actions</span>
                 ) : (
                   <>
-                    <ButtonLink to={`/employer/jobs/${job.id}/edit`} variant="secondary" size="sm">
+                    <ButtonLink to={`/recruiter/jobs/${job.id}/edit`} variant="secondary" size="sm">
                       Edit
                     </ButtonLink>
                     <Button

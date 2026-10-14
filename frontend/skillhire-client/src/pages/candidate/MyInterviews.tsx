@@ -40,7 +40,7 @@ export default function MyInterviews() {
 
   return (
     <>
-      <PageHeader title="My interviews" subtitle="Dates, meeting links and instructions from employers." />
+      <PageHeader title="My interviews" subtitle="Dates, meeting links and instructions from recruiters." />
 
       <div className="mb-5">
         <FilterTabs
@@ -58,7 +58,7 @@ export default function MyInterviews() {
           title={tab === 'upcoming' ? 'No upcoming interviews' : 'No past interviews'}
           message={
             tab === 'upcoming'
-              ? 'When an employer schedules an interview with you, it will appear here.'
+              ? 'When a recruiter schedules an interview with you, it will appear here.'
               : undefined
           }
           action={tab === 'upcoming' ? <ButtonLink to="/candidate/applications">View my applications</ButtonLink> : undefined}

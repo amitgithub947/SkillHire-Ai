@@ -30,7 +30,7 @@ public class AuthService : IAuthService
             throw AppException.Conflict("An account with this email already exists.");
         }
 
-        var role = Enum.Parse<UserRole>(request.Role);
+        var role = request.IsRecruiter() ? UserRole.Recruiter : UserRole.Candidate;
 
         var user = new User
         {
@@ -41,7 +41,7 @@ public class AuthService : IAuthService
         };
 
         // Create the matching empty profile so later features can fill it in.
-        if (role == UserRole.Employer)
+        if (role == UserRole.Recruiter)
         {
             user.Employer = new Employer { CompanyName = request.CompanyName!.Trim() };
         }

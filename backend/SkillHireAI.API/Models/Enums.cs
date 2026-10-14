@@ -3,7 +3,8 @@ namespace SkillHireAI.API.Models;
 public enum UserRole
 {
     Admin,
-    Employer,
+    /// <summary>Posts jobs and manages applicants. Their company profile is still the Employer entity.</summary>
+    Recruiter,
     Candidate
 }
 

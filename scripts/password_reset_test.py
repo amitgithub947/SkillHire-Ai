@@ -26,7 +26,7 @@ RUN = str(int(time.time()))
 PASSWORD = "Password123"
 NEW_PASSWORD = "NewSecret456"
 ADMIN_EMAIL = "admin@skillhire.ai"
-GENERIC = "If an employer or candidate account exists for this email"
+GENERIC = "If a recruiter or candidate account exists for this email"
 
 passed = 0
 failed = 0
@@ -104,7 +104,7 @@ print(f"\nSkillHire AI forgot-password test against {BASE} (reading emails from 
 candidate = f"reset.cand.{RUN}@example.com"
 employer = f"reset.emp.{RUN}@example.com"
 cand_token = register("Candidate", candidate, "Reset Candidate")
-register("Employer", employer, "Reset Employer", "Reset Co")
+register("Recruiter", employer, "Reset Employer", "Reset Co")
 
 print("\nInput validation")
 expect("forgot-password without email", "POST", "/api/auth/forgot-password", 400, {})
@@ -185,7 +185,7 @@ expect("older code no longer works", "POST", "/api/auth/verify-otp", 400, {"emai
 expect("newest code works", "POST", "/api/auth/reset-password", 200,
        {"email": employer, "otp": second, "newPassword": NEW_PASSWORD, "confirmPassword": NEW_PASSWORD})
 data, _ = expect("employer logs in with new password", "POST", "/api/auth/login", 200, {"email": employer, "password": NEW_PASSWORD})
-check("  role unchanged", data["user"]["role"] == "Employer")
+check("  role unchanged", data["user"]["role"] == "Recruiter")
 
 print("\nToo many wrong codes lock the code")
 locked = f"reset.lock.{RUN}@example.com"

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ResumeAnalyzerCard } from '../../components/ai/ResumeAnalyzerCard'
 import { Alert } from '../../components/Alert'
 import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
 import { Modal } from '../../components/Modal'
@@ -63,7 +64,7 @@ export default function ResumeUpload() {
     try {
       const updated = await candidateService.uploadResume(file, setProgress)
       setData(updated)
-      setMessage(`"${updated.resumeFileName}" uploaded. Employers will see it when you apply.`)
+      setMessage(`"${updated.resumeFileName}" uploaded. Recruiters will see it when you apply.`)
       setFile(null)
       if (inputRef.current) inputRef.current.value = ''
     } catch (err) {
@@ -92,13 +93,13 @@ export default function ResumeUpload() {
 
   return (
     <>
-      <PageHeader title="Resume" subtitle="Upload the resume employers will see when you apply." />
+      <PageHeader title="Resume" subtitle="Upload the resume recruiters will see when you apply." />
 
       <div className="max-w-3xl space-y-6">
         {message && <Alert variant="success">{message}</Alert>}
         {actionError && <Alert variant="error">{actionError}</Alert>}
 
-        <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <section className="card p-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Current resume</h2>
           {profile.resumeFileName ? (
             <div className="mt-4 flex flex-wrap items-center gap-4">
@@ -123,7 +124,7 @@ export default function ResumeUpload() {
               {profile.resumeUrl ? (
                 <>
                   No file uploaded. You are using a resume link:{' '}
-                  <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="break-all text-brand-blue dark:text-blue-400 hover:underline">
+                  <a href={profile.resumeUrl} target="_blank" rel="noreferrer" className="break-all link">
                     {profile.resumeUrl}
                   </a>
                 </>
@@ -136,7 +137,7 @@ export default function ResumeUpload() {
 
         <ResumeAnalyzerCard savedFileName={profile.resumeFileName} />
 
-        <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <section className="card p-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {profile.resumeFileName ? 'Replace resume' : 'Upload resume'}
           </h2>
@@ -148,13 +149,13 @@ export default function ResumeUpload() {
             }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={handleDrop}
-            className={`mt-4 flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition ${
+            className={`mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition ${
               isDragging ? 'border-brand-blue bg-blue-50 dark:bg-blue-500/10' : fileError ? 'border-red-300 dark:border-red-500/40 bg-red-50/40 dark:bg-red-500/5' : 'border-slate-300 dark:border-slate-600'
             }`}
           >
             <p className="font-medium text-brand-navy dark:text-slate-100">Drag and drop your resume here</p>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">PDF, DOC or DOCX, up to 5 MB</p>
-            <label className="mt-4 cursor-pointer rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 focus-within:ring-2 focus-within:ring-blue-300">
+            <label className={buttonClasses('secondary', 'md', 'mt-4 cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600')}>
               Choose file
               <input
                 ref={inputRef}
@@ -204,7 +205,7 @@ export default function ResumeUpload() {
 
           <p className="mt-5 text-sm text-slate-500 dark:text-slate-400">
             Prefer a link (Google Drive, Dropbox)? Add it on your{' '}
-            <Link to="/candidate/profile" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
+            <Link to="/candidate/profile" className="link">
               profile
             </Link>
             .
@@ -236,7 +237,7 @@ export default function ResumeUpload() {
           }
         >
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Employers you already applied to will no longer be able to open this file. You will need a resume to apply for
+            Recruiters you already applied to will no longer be able to open this file. You will need a resume to apply for
             new jobs.
           </p>
         </Modal>

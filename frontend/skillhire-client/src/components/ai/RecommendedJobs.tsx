@@ -16,7 +16,7 @@ export function RecommendedJobs() {
   return (
     <section className="mt-10">
       <div className="mb-4 flex items-center gap-2">
-        <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">Recommended for you</h2>
+        <h2 className="section-title">Recommended for you</h2>
         <AiLabel />
       </div>
 
@@ -24,7 +24,7 @@ export function RecommendedJobs() {
         <div className="grid gap-4 lg:grid-cols-2" aria-busy="true">
           <p className="sr-only">Finding jobs that match your skills…</p>
           {[0, 1].map((i) => (
-            <div key={i} className="h-36 animate-pulse rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+            <div key={i} className="h-36 animate-pulse card p-5">
               <div className="h-4 w-2/3 rounded bg-slate-100 dark:bg-slate-800" />
               <div className="mt-3 h-3 w-1/3 rounded bg-slate-100 dark:bg-slate-800" />
               <div className="mt-6 h-3 w-full rounded bg-slate-100 dark:bg-slate-800" />
@@ -32,7 +32,7 @@ export function RecommendedJobs() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-8 text-center shadow-sm">
+        <div className="card px-6 py-8 text-center">
           <p className="text-sm text-slate-600 dark:text-slate-300">{error}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <ButtonLink to="/candidate/profile" variant="secondary" size="sm">
@@ -74,7 +74,7 @@ function JobMatchCard({ match }: { match: JobMatch }) {
   return (
     <Link
       to={`/candidate/jobs/${job.id}`}
-      className="group flex gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+      className="group flex gap-4 card p-5 transition-colors hover:border-blue-300 dark:hover:border-blue-500/40"
     >
       <CompanyLogo name={job.companyName} logoUrl={job.companyLogoUrl} />
       <div className="min-w-0 flex-1">

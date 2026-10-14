@@ -37,7 +37,7 @@ export interface AdminCandidate {
 export interface UserStats {
   total: number
   admins: number
-  employers: number
+  recruiters: number
   candidates: number
 }
 

@@ -86,7 +86,7 @@ export default function JobList() {
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="mb-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm sm:p-6"
+        className="mb-8 card p-5 sm:p-6"
         role="search"
       >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

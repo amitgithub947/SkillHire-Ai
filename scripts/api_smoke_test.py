@@ -90,11 +90,26 @@ for p in ["/api/employer/profile", "/api/employer/jobs", "/api/employer/jobs/{id
     check(f"swagger documents {p}", p in paths)
 
 print("\nAccounts")
-emp_a = register("Employer", f"emp-a-{RUN}@example.com", "Acme Corp")
-emp_b = register("Employer", f"emp-b-{RUN}@example.com", "Other Inc")
+emp_a = register("Recruiter", f"emp-a-{RUN}@example.com", "Acme Corp")
+emp_b = register("Recruiter", f"emp-b-{RUN}@example.com", "Other Inc")
 cand = register("Candidate", f"cand-{RUN}@example.com")
 admin = expect("admin login", "POST", "/api/auth/login", 200,
                body={"email": "admin@skillhire.ai", "password": "Admin@12345"})["token"]
+
+me = expect("GET me as recruiter", "GET", "/api/auth/me", 200, emp_a)
+check("new account role is Recruiter", me and me["role"] == "Recruiter")
+legacy = expect("register with old role name Employer", "POST", "/api/auth/register", 201, body={
+    "name": "Legacy Client", "email": f"legacy-{RUN}@example.com", "password": PASSWORD,
+    "confirmPassword": PASSWORD, "role": "Employer", "companyName": "Legacy Co"})
+check("old Employer name creates a Recruiter", legacy and legacy["user"]["role"] == "Recruiter")
+expect("register as Admin is refused", "POST", "/api/auth/register", 400, body={
+    "name": "Sneaky Admin", "email": f"sneaky-admin-{RUN}@example.com", "password": PASSWORD,
+    "confirmPassword": PASSWORD, "role": "Admin"})
+expect("recruiter cannot open admin dashboard", "GET", "/api/admin/dashboard", 403, emp_a)
+expect("recruiter cannot approve jobs", "PATCH", "/api/admin/jobs/1/approve", 403, emp_a)
+expect("recruiter cannot open candidate API", "GET", "/api/candidate/profile", 403, emp_a)
+dash = expect("recruiter dashboard check", "GET", "/api/dashboard/recruiter", 200, emp_a)
+check("dashboard check says Recruiter", dash and dash["role"] == "Recruiter")
 
 print("\nEmployer profile")
 profile = expect("GET profile", "GET", "/api/employer/profile", 200, emp_a)
@@ -158,8 +173,8 @@ dash = expect("GET admin dashboard", "GET", "/api/admin/dashboard", 200, admin)
 check("admin dashboard has pending jobs", dash["jobs"]["pending"] >= 2 and len(dash["recentPendingJobs"]) >= 1)
 users = expect("GET users", "GET", "/api/admin/users", 200, admin)
 check("users include new accounts", any(u["email"] == f"cand-{RUN}@example.com" for u in users))
-emps = expect("GET users ?role=Employer", "GET", "/api/admin/users?role=Employer", 200, admin)
-check("role filter only returns employers", emps and all(u["role"] == "Employer" for u in emps))
+emps = expect("GET users ?role=Recruiter", "GET", "/api/admin/users?role=Recruiter", 200, admin)
+check("role filter only returns recruiters", emps and all(u["role"] == "Recruiter" for u in emps))
 found = expect("GET users ?search=", "GET", f"/api/admin/users?search=emp-a-{RUN}", 200, admin)
 check("search finds one user", len(found) == 1)
 employers = expect("GET employers", "GET", "/api/admin/employers", 200, admin)

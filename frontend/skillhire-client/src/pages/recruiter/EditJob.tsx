@@ -20,7 +20,7 @@ export default function EditJob() {
     return (
       <div className="mx-auto max-w-3xl space-y-4">
         <ErrorState message={error ?? 'Job not found.'} onRetry={reload} />
-        <ButtonLink to="/employer/jobs" variant="secondary">
+        <ButtonLink to="/recruiter/jobs" variant="secondary">
           Back to my jobs
         </ButtonLink>
       </div>
@@ -33,7 +33,7 @@ export default function EditJob() {
       job.status === updated.status
         ? `"${updated.title}" was updated.`
         : `"${updated.title}" was updated and sent back for admin review.`
-    navigate('/employer/jobs', { state: { message } })
+    navigate('/recruiter/jobs', { state: { message } })
   }
 
   return (
@@ -47,7 +47,7 @@ export default function EditJob() {
       {job.status === 'Closed' ? (
         <div className="space-y-4">
           <Alert variant="info">This job is closed and can no longer be edited.</Alert>
-          <ButtonLink to="/employer/jobs" variant="secondary">
+          <ButtonLink to="/recruiter/jobs" variant="secondary">
             Back to my jobs
           </ButtonLink>
         </div>
@@ -71,7 +71,7 @@ export default function EditJob() {
             initialJob={job}
             submitLabel="Save changes"
             onSubmit={handleSubmit}
-            onCancel={() => navigate('/employer/jobs')}
+            onCancel={() => navigate('/recruiter/jobs')}
           />
         </>
       )}

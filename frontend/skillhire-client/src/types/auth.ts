@@ -1,4 +1,4 @@
-export const USER_ROLES = ['Admin', 'Employer', 'Candidate'] as const
+export const USER_ROLES = ['Admin', 'Recruiter', 'Candidate'] as const
 export type UserRole = (typeof USER_ROLES)[number]
 
 /** Roles a visitor can pick on the register page. Admins are created by the system. */

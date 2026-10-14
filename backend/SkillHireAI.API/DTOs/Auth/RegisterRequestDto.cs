@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SkillHireAI.API.Models;
 
 namespace SkillHireAI.API.DTOs.Auth;
 
@@ -22,21 +23,26 @@ public class RegisterRequestDto : IValidatableObject
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
-    /// <summary>Only "Employer" or "Candidate". Admin accounts cannot self-register.</summary>
+    /// <summary>The old name of the Recruiter role, still accepted so older clients keep working.</summary>
+    public const string LegacyRecruiterRole = "Employer";
+
+    /// <summary>Only "Recruiter" or "Candidate". Admin accounts cannot self-register.</summary>
     [Required]
-    [RegularExpression("^(Employer|Candidate)$", ErrorMessage = "Role must be Employer or Candidate.")]
+    [RegularExpression("^(Recruiter|Candidate|Employer)$", ErrorMessage = "Role must be Recruiter or Candidate.")]
     public string Role { get; set; } = string.Empty;
 
-    /// <summary>Required when Role is Employer.</summary>
+    /// <summary>Required when Role is Recruiter.</summary>
     [StringLength(200)]
     public string? CompanyName { get; set; }
 
+    public bool IsRecruiter() => Role is nameof(UserRole.Recruiter) or LegacyRecruiterRole;
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (Role == "Employer" && string.IsNullOrWhiteSpace(CompanyName))
+        if (IsRecruiter() && string.IsNullOrWhiteSpace(CompanyName))
         {
             yield return new ValidationResult(
-                "Company name is required for employers.",
+                "Company name is required for recruiters.",
                 new[] { nameof(CompanyName) });
         }
     }

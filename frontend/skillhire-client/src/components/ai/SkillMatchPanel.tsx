@@ -27,7 +27,7 @@ export function SkillMatchPanel({ jobId }: { jobId: number }) {
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm" aria-live="polite">
+    <section className="card p-6" aria-live="polite">
       <div className="flex items-center gap-2">
         <h2 className="font-semibold text-brand-navy dark:text-slate-100">Skill match</h2>
         <AiLabel />
@@ -70,7 +70,7 @@ export function SkillMatchPanel({ jobId }: { jobId: number }) {
           {!match.usedResumeAnalysis && (
             <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
               Based on your profile skills only.{' '}
-              <Link to="/candidate/resume" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
+              <Link to="/candidate/resume" className="link">
                 Analyze your resume
               </Link>{' '}
               for a more complete match.
@@ -80,7 +80,7 @@ export function SkillMatchPanel({ jobId }: { jobId: number }) {
       )}
 
       <p className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-500 dark:text-slate-400">
-        An AI estimate to help you decide. It is not shown to the employer and never decides who gets hired.
+        An AI estimate to help you decide. It is not shown to the recruiter and never decides who gets hired.
       </p>
     </section>
   )

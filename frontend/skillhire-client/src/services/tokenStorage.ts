@@ -1,4 +1,4 @@
-import type { StoredSession } from '../types/auth'
+import { USER_ROLES, type StoredSession } from '../types/auth'
 
 // MVP choice: the session lives in localStorage so it survives a page refresh.
 // Anything that can run script on the page can read it, so later this should
@@ -13,7 +13,8 @@ export const tokenStorage = {
 
     try {
       const session = JSON.parse(raw) as StoredSession
-      if (!session.token || isExpired(session.expiresAt)) {
+      // Sessions saved before the Employer role became Recruiter carry a token the API no longer accepts.
+      if (!session.token || isExpired(session.expiresAt) || !(USER_ROLES as readonly string[]).includes(session.user?.role ?? '')) {
         localStorage.removeItem(STORAGE_KEY)
         return null
       }

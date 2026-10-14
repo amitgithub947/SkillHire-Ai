@@ -47,16 +47,16 @@ export default function JobDetails() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
+          <section className="card p-6 sm:p-8">
             <div className="flex items-start gap-4">
               <CompanyLogo name={data.companyName} logoUrl={data.companyLogoUrl} size="lg" />
               <div className="min-w-0">
-                <h1 className="text-2xl font-bold text-brand-navy dark:text-slate-100">{data.title}</h1>
+                <h1 className="text-xl font-semibold text-brand-navy dark:text-slate-100 sm:text-2xl">{data.title}</h1>
                 <p className="mt-1 text-slate-500 dark:text-slate-400">{data.companyName}</p>
               </div>
             </div>
 
-            <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
+            <dl className="mt-6 grid grid-cols-2 gap-4 rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-4">
               <Fact label="Location" value={data.location ?? '—'} />
               <Fact label="Salary" value={formatSalary(data.salaryMin, data.salaryMax)} />
               <Fact label="Experience" value={formatExperience(data.experienceRequired)} />
@@ -77,8 +77,8 @@ export default function JobDetails() {
             <Section title="Requirements" text={data.requirements} />
           </section>
 
-          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8">
-            <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">About {data.companyName}</h2>
+          <section className="card p-6 sm:p-8">
+            <h2 className="section-title">About {data.companyName}</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
               {data.companyDescription ?? 'This company has not added a description yet.'}
             </p>
@@ -89,7 +89,7 @@ export default function JobDetails() {
                   href={data.companyWebsite}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-medium text-brand-blue dark:text-blue-400 hover:underline"
+                  className="link"
                 >
                   {data.companyWebsite}
                 </a>
@@ -120,14 +120,14 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
   const [justApplied, setJustApplied] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const card = 'rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm'
+  const card = 'card p-6'
 
   if (job.applicationStatus) {
     return (
       <div className={card}>
         {justApplied && (
           <div className="mb-4">
-            <Alert variant="success">Application sent! The employer will review it soon.</Alert>
+            <Alert variant="success">Application sent! The recruiter will review it soon.</Alert>
           </div>
         )}
         <div className="flex items-center justify-between gap-3">
@@ -172,7 +172,7 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
       <div className={card}>
         <h2 className="font-semibold text-brand-navy dark:text-slate-100">Apply for this job</h2>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Employers need to see your resume. Upload one (or add a resume link) before applying.
+          Recruiters need to see your resume. Upload one (or add a resume link) before applying.
         </p>
         <ButtonLink to="/candidate/resume" className="mt-5 w-full">
           Upload resume
@@ -212,7 +212,7 @@ function ApplyPanel({ job, profile, onApplied, onConflict }: ApplyPanelProps) {
       {profile && !profile.isComplete && (
         <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Tip: a complete{' '}
-          <Link to="/candidate/profile" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
+          <Link to="/candidate/profile" className="link">
             profile
           </Link>{' '}
           makes a better first impression.

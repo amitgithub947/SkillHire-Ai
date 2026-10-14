@@ -5,6 +5,7 @@ import { parseApiError } from '../../services/errors'
 import { checkPdf } from '../../utils/ai'
 import { Alert } from '../Alert'
 import { Button } from '../Button'
+import { buttonClasses } from '../buttonClasses'
 import { AiLabel } from './AiLabel'
 
 interface ResumeAnalyzerCardProps {
@@ -45,9 +46,9 @@ export function ResumeAnalyzerCard({ savedFileName }: ResumeAnalyzerCardProps) {
   }
 
   return (
-    <section className="rounded-xl border border-violet-200 dark:border-violet-500/30 bg-gradient-to-br from-white dark:from-slate-900 to-violet-50/60 dark:to-violet-500/6 p-6 shadow-sm">
+    <section className="card p-5 sm:p-6">
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Resume analyzer</h2>
+        <h2 className="section-title">Resume analyzer</h2>
         <AiLabel />
       </div>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
@@ -62,7 +63,8 @@ export function ResumeAnalyzerCard({ savedFileName }: ResumeAnalyzerCardProps) {
       )}
 
       {running && (
-        <p className="mt-4 text-sm text-violet-700 dark:text-violet-300" role="status">
+        <p className="mt-4 flex items-center gap-2 text-sm text-violet-700 dark:text-violet-300" role="status">
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
           Analyzing your resume. This usually takes 5 to 20 seconds…
         </p>
       )}
@@ -74,9 +76,11 @@ export function ResumeAnalyzerCard({ savedFileName }: ResumeAnalyzerCardProps) {
           </Button>
         )}
         <label
-          className={`rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition focus-within:ring-2 focus-within:ring-blue-300 ${
-            running ? 'pointer-events-none opacity-60' : 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60'
-          }`}
+          className={buttonClasses(
+            'secondary',
+            'md',
+            `focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 ${running ? 'pointer-events-none opacity-60' : 'cursor-pointer'}`,
+          )}
         >
           {running === 'file' ? 'Analyzing PDF…' : savedIsPdf ? 'Analyze a different PDF' : 'Choose a PDF to analyze'}
           <input
@@ -87,7 +91,7 @@ export function ResumeAnalyzerCard({ savedFileName }: ResumeAnalyzerCardProps) {
             onChange={chooseFile}
           />
         </label>
-        <Link to="/candidate/resume/analysis" className="text-sm font-medium text-brand-blue dark:text-blue-400 hover:underline">
+        <Link to="/candidate/resume/analysis" className="link text-sm">
           View last analysis
         </Link>
       </div>

@@ -22,7 +22,7 @@ export default function CandidateProfile() {
 
   return (
     <>
-      <PageHeader title="My profile" subtitle="Employers see this when you apply for their jobs." />
+      <PageHeader title="My profile" subtitle="Recruiters see this when you apply for their jobs." />
       <ProfileForm profile={data} onSaved={setData} />
     </>
   )
@@ -115,7 +115,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm sm:p-8 lg:col-span-2"
+        className="space-y-6 card p-6 sm:p-8 lg:col-span-2"
       >
         {saved && <Alert variant="success">Profile saved.</Alert>}
         {serverError && <Alert variant="error">{serverError}</Alert>}
@@ -205,7 +205,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
       </form>
 
       <aside className="h-fit space-y-6">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <div className="card p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Profile status</p>
           {profile.isComplete ? (
             <p className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-300">Your profile is complete.</p>
@@ -223,7 +223,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
           <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Experience: {formatExperience(profile.experienceYears)}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+        <div className="card p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Resume</p>
           {profile.resumeFileName ? (
             <p className="mt-3 break-all text-sm text-slate-700 dark:text-slate-200">
@@ -242,7 +242,7 @@ function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (p: Prof
 
         <p className="px-1 text-xs text-slate-500 dark:text-slate-400">
           Your name and email come from your account.{' '}
-          <Link to="/candidate/jobs" className="font-medium text-brand-blue dark:text-blue-400 hover:underline">
+          <Link to="/candidate/jobs" className="link">
             Browse jobs
           </Link>
         </p>

@@ -26,8 +26,9 @@ export default function CandidateDashboard() {
   return (
     <>
       <PageHeader
-        title={`Welcome, ${firstName}`}
-        subtitle="Here is where your job search stands."
+        eyebrow="Your job search"
+        title={`Welcome back, ${firstName}`}
+        subtitle="Track your applications, interviews and the jobs that fit your skills."
         actions={<ButtonLink to="/candidate/jobs">Find jobs</ButtonLink>}
       />
 
@@ -35,7 +36,7 @@ export default function CandidateDashboard() {
         <div className="mb-6">
           <Alert variant="info">
             Upload your resume so you can start applying.{' '}
-            <Link to="/candidate/resume" className="font-semibold underline">
+            <Link to="/candidate/resume" className="font-medium underline">
               Upload resume
             </Link>
           </Alert>
@@ -44,8 +45,8 @@ export default function CandidateDashboard() {
         !data.profileComplete && (
           <div className="mb-6">
             <Alert variant="info">
-              Add your phone, location and skills so employers know more about you.{' '}
-              <Link to="/candidate/profile" className="font-semibold underline">
+              Add your phone, location and skills so recruiters know more about you.{' '}
+              <Link to="/candidate/profile" className="font-medium underline">
                 Complete profile
               </Link>
             </Alert>
@@ -53,21 +54,21 @@ export default function CandidateDashboard() {
         )
       )}
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-        <StatCard label="Applications" value={data.applications.total} tone="blue" />
-        <StatCard label="Awaiting review" value={data.applications.applied} tone="slate" />
-        <StatCard label="Shortlisted" value={data.applications.shortlisted} tone="violet" />
-        <StatCard label="Interviews" value={data.applications.interviewScheduled} tone="amber" />
-        <StatCard label="Selected" value={data.applications.selected} tone="emerald" />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <StatCard label="Applications" value={data.applications.total} tone="blue" icon="briefcase" />
+        <StatCard label="Awaiting review" value={data.applications.applied} tone="slate" icon="inbox" />
+        <StatCard label="Shortlisted" value={data.applications.shortlisted} tone="violet" icon="check" />
+        <StatCard label="Interviews" value={data.applications.interviewScheduled} tone="amber" icon="calendar" />
+        <StatCard label="Selected" value={data.applications.selected} tone="emerald" icon="checkCircle" />
       </div>
 
       <RecommendedJobs />
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-2">
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section>
           <SectionHeader title="Upcoming interviews" to="/candidate/interviews" show={data.upcomingInterviews.length > 0} />
           {data.upcomingInterviews.length === 0 ? (
-            <EmptyState title="No interviews scheduled" message="Interviews employers schedule with you show up here." />
+            <EmptyState icon="calendar" title="No interviews scheduled" message="Interviews recruiters schedule with you show up here." />
           ) : (
             <div className="space-y-3">
               {data.upcomingInterviews.map((interview) => (
@@ -86,7 +87,7 @@ export default function CandidateDashboard() {
               action={<ButtonLink to="/candidate/jobs">Browse jobs</ButtonLink>}
             />
           ) : (
-            <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <ul className="card divide-y divide-slate-100 dark:divide-slate-800">
               {data.recentApplications.map((application) => (
                 <li key={application.id} className="flex items-center gap-4 px-5 py-4">
                   <CompanyLogo name={application.companyName} logoUrl={application.companyLogoUrl} />
@@ -104,7 +105,7 @@ export default function CandidateDashboard() {
         </section>
       </div>
 
-      <section className="mt-10">
+      <section className="mt-8">
         <SectionHeader title="New jobs for you" to="/candidate/jobs" show={data.latestJobs.length > 0} />
         {data.latestJobs.length === 0 ? (
           <EmptyState title="No new jobs right now" message="You have seen every open job. Check back soon." />
@@ -122,10 +123,10 @@ export default function CandidateDashboard() {
 
 function SectionHeader({ title, to, show }: { title: string; to: string; show: boolean }) {
   return (
-    <div className="mb-4 flex items-center justify-between">
-      <h2 className="text-lg font-semibold text-brand-navy dark:text-slate-100">{title}</h2>
+    <div className="mb-3 flex items-center justify-between">
+      <h2 className="section-title">{title}</h2>
       {show && (
-        <Link to={to} className="text-sm font-semibold text-brand-blue dark:text-blue-400 hover:underline">
+        <Link to={to} className="text-sm link">
           View all
         </Link>
       )}
