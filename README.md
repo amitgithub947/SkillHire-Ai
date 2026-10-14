@@ -33,6 +33,8 @@ skill-match percentages and job recommendations.
 ```
 SkillHireAI/
 ├── backend/
+│   ├── SkillHireAI.slnx     Solution with the API and test projects
+│   ├── SkillHireAI.Tests/   xUnit unit tests (no database, no AI calls)
 │   └── SkillHireAI.API/
 │       ├── Controllers/     Auth, Dashboard, Employer, EmployerJobs, EmployerApplications,
 │       │                    Admin, Candidate, CandidateJobs, CandidateApplications, Ai
@@ -273,6 +275,29 @@ Testing the AI endpoints in Swagger (http://localhost:5052/swagger):
 
 There must be at least one approved job (an employer posts it and the admin approves it).
 
+### Unit tests (xUnit)
+
+`backend/SkillHireAI.Tests` holds fast unit tests for the backend business rules. They
+don't need SQL Server, the running API or an OpenRouter key.
+
+| Test class | What it checks |
+| --- | --- |
+| `JobValidationTests` | Job form rules: title 3-200 characters, minimum description and requirements length, experience 0-50 years, max salary not below min salary |
+| `ApplicationStatusRulesTests` | Allowed status changes: shortlist only from Applied, select only after shortlist or interview, Selected and Rejected are final, candidates edit or withdraw only while Applied |
+| `SkillMatchCalculatorTests` | Exact-name skill match percentage, matched and missing skills, case, spaces and duplicates ignored |
+
+```bash
+cd backend
+dotnet test                                              # run all tests
+dotnet test --logger "console;verbosity=normal"          # list every test and its result
+dotnet test --filter "FullyQualifiedName~SkillMatchCalculatorTests"   # one test class
+```
+
+A successful run ends with `Test Run Successful.` and the passed count. A failing test is
+listed as `Failed SkillHireAI.Tests.<Class>.<Test>` with the `Expected` and `Actual` values
+and the line number. Each `[InlineData]` row of a `[Theory]` runs as its own test, so the
+output shows exactly which input failed.
+
 ### API tests
 
 With the API running, these register test users and check every endpoint,
@@ -431,6 +456,9 @@ a custom domain later, also add it to `Cors__AllowedOrigins__1` and update `Emai
 ## Useful commands
 
 ```bash
+# Run the backend unit tests (from the repo root)
+dotnet test backend/SkillHireAI.slnx
+
 # Add a new migration after changing models
 cd backend/SkillHireAI.API
 dotnet ef migrations add <Name>
